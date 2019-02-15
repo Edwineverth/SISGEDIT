@@ -1,0 +1,77 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block estilos %}
+<link href="{% static 'plugins/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/node-waves/waves.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/animate-css/animate.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/dropzone/dropzone.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/multi-select/css/multi-select.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/jquery-spinner/css/bootstrap-spinner.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/bootstrap-tagsinput/bootstrap-tagsinput.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/bootstrap-select/css/bootstrap-select.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/nouislider/nouislider.min.css' %}" rel="stylesheet" />
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
+<link href="{% static 'css/themes/all-themes.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/sweetalert/sweetalert.css'%} " rel="stylesheet" />
+
+{% endblock estilos %}
+
+{% block content %}
+<div class="container-fluid">
+    <div class="block-header">
+    </div>
+    <!-- Input -->
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        VENTANA INFORMATIVA
+                        <small>Proceso de eliminación</small>
+                    </h2>
+                </div>
+                <div class="body">
+                    <div class="alert alert bg-teal" role="alert">
+                        ELIMINAR REQUERIDO
+                    </div>
+
+                    <Form action="" method="post"> {% csrf_token %}
+                        <p> ¿Seguro que quieres eliminar " {{ requerido }} "? </p>
+
+                        <button type="submit" class="btn btn-primary">CONFIRMAR</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+{% endblock content %}
+
+
+{% block js %}
+<!-- Jquery Core Js -->
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap/js/bootstrap.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-select/js/bootstrap-select.js' %}"></script>
+<script src="{% static 'plugins/jquery-slimscroll/jquery.slimscroll.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.js' %}"></script>
+<script src="{% static 'plugins/dropzone/dropzone.js' %}"></script>
+<script src="{% static 'plugins/jquery-inputmask/jquery.inputmask.bundle.js' %}"></script>
+<script src="{% static 'plugins/multi-select/js/jquery.multi-select.js' %}"></script>
+<script src="{% static 'plugins/jquery-spinner/js/jquery.spinner.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-tagsinput/bootstrap-tagsinput.js' %}"></script>
+<script src="{% static 'plugins/nouislider/nouislider.js' %}"></script>
+<script src="{% static 'plugins/node-waves/waves.js' %}"></script>
+<script src="{% static 'plugins/sweetalert/sweetalert.min.js' %}"></script>
+<script src="{% static 'js/admin.js' %}"></script>
+<script src="{% static 'js/system/cobertura.js' %}"></script>
+<script src="{% static 'js/system/usuarios.js' %}"></script>
+<script src="{% static 'js/pages/forms/advanced-form-elements.js' %}"></script>
+<script src="{% static 'js/demo.js' %}"></script>
+{% endblock js %}

@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <script src="http://code.jquery.com/jquery-latest.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function(){
+        /**
+         * Funcion para añadir una nueva columna en la tabla
+         */
+        $("#add").click(function(){
+            // Obtenemos el numero de filas (td) que tiene la primera columna
+            // (tr) del id "tabla"
+            var tds=$("#tabla tr:first td").length;
+            // Obtenemos el total de columnas (tr) del id "tabla"
+            var trs=$("#tabla tr").length;
+            var nuevaFila="<tr>";
+            for(var i=0;i<tds;i++){
+                // añadimos las columnas
+                nuevaFila+="<td>columna "+(i+1)+" Añadida con jquery</td>";
+            }
+            // Añadimos una columna con el numero total de filas.
+            // Añadimos uno al total, ya que cuando cargamos los valores para la
+            // columna, todavia no esta añadida
+            nuevaFila+="<td>"+(trs+1)+" filas";
+            nuevaFila+="</tr>";
+            $("#tabla").append(nuevaFila);
+        });
+ 
+        /**
+         * Funcion para eliminar la ultima columna de la tabla.
+         * Si unicamente queda una columna, esta no sera eliminada
+         */
+        $("#del").click(function(){
+            // Obtenemos el total de columnas (tr) del id "tabla"
+            var trs=$("#tabla tr").length;
+            if(trs>1)
+            {
+                // Eliminamos la ultima columna
+                $("#tabla tr:last").remove();
+            }
+        });
+    });
+    </script>
+ 
+    <style>
+    td, input {padding:5px;}
+    </style>
+</head>
+ 
+<body>
+<input type="button" id="add" value="añadir una nueva fila desde jquery">
+<input type="button" id="del" value="eliminar la ultima fila desde jquery">
+<p>
+    <table id="tabla" border=1>
+        <tr>
+            <td>primera columma</td>
+            <td>segundo columna</td>
+            <!-- podemos añadir tantas columnas como deseemos -->
+            <!--<td>tercera columna</td>-->
+        </tr>
+    </table>
+</p>
+</body>
+</html>

@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block estilos %}
+<link href="{% static 'plugins/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/node-waves/waves.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/animate-css/animate.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/dropzone/dropzone.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/multi-select/css/multi-select.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/jquery-spinner/css/bootstrap-spinner.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/bootstrap-tagsinput/bootstrap-tagsinput.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/bootstrap-select/css/bootstrap-select.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/nouislider/nouislider.min.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css' %}"
+    rel="stylesheet" />
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
+<link href="{% static 'css/themes/all-themes.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/sweetalert/sweetalert.css'%} " rel="stylesheet" />
+
+{% endblock estilos %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="block-header">
+        <h2>REGISTRO DE ACTIVIDADES AL SISTEMA</h2>
+    </div>
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    <h2>
+                        ACTIVIDAD
+                        <small>Ingrese cada uno de los datos correctamente</small>
+                    </h2>
+                </div>
+                <div class="body">
+                    <h2 class="card-inside-title">DATOS</h2>
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <input type="text" id="nombre_Text" class="form-control" placeholder="Nombre" />
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-sm-12">
+                            <div class="form-group">
+                                <div class="form-line">
+                                    <textarea rows="4" id="descripcion_text" class="form-control no-resize"
+                                        placeholder="Ingrese la descripción de la actividad"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="col-md-6">
+                            <p>
+                                <b>Usuarios del Sistema</b>
+                            </p>
+                            <select id="usuario_select" class="form-control show-tick" data-live-search="true">
+                                {% for usu in usuario_list %}
+                                <option id="{{usu.secuencial}}">{{usu.usuario}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <b>Coberturas del Sistema</b>
+                            </p>
+                            <select id="cobertura_select" class="form-control show-tick" data-live-search="true">
+                                {% for cob in cobertura_list %}
+                                <option id="{{cob.secuencial}}">{{cob.nombre}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <p>
+                                <b>Requeridos del Sistema</b>
+                            </p>
+                            <select id="requerido_select" class="form-control show-tick" data-live-search="true">
+                                {% for req in requerido_list %}
+                                <option id="{{req.secuencial}}">{{req.nombre}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-sm-6">
+                        <p>
+                            <b>Recurrencia</b>
+                        </p>
+                        <select id="recurrencia_select" class="form-control show-tick" data-live-search="true" onchange="activarSemanas()">
+                            {% for tipact in tipoactividad_list %}
+                            <option id="{{tipact.secuencial}}">{{tipact.nombre}}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="col-sm-6" id="nsemana">
+                        <p>
+                            <b>Número de Semana</b>
+                        </p>
+                        <div class="input-group spinner" data-trigger="spinner">
+                            <div class="form-line">
+                                <input type="text" id="nsemana_Text" class="form-control text-center" value="1"
+                                    data-rule="quantity">
+                            </div>
+                            <span class="input-group-addon">
+                                <a href="javascript:;" class="spin-up" data-spin="up"><i
+                                        class="glyphicon glyphicon-chevron-up"></i></a>
+                                <a href="javascript:;" class="spin-down" data-spin="down"><i
+                                        class="glyphicon glyphicon-chevron-down"></i></a>
+                            </span>
+                        </div>
+                    </div>
+                    <br />
+                    <div class="col-sm-6" id="tablasemana" style="display: none">
+                        <div class="icon-button-demo m-t-25">
+                            <button type="button" id="add"
+                                class="btn btn-default btn-circle waves-effect waves-circle waves-float">
+                                <i class="material-icons">add</i>
+                            </button>
+                            <button type="button" id="del"
+                                class="btn btn-default btn-circle waves-effect waves-circle waves-float">
+                                <i class="material-icons">remove</i>
+                            </button>
+                        </div>
+
+                        <table id="mainTable" class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Semana</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>0</td>
+                                    
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+                    <hr />
+                    <div class="row clearfix">
+                        <div class="col-md-6">
+                            <button class="btn btn-primary waves-effect" data-type="success"
+                                onclick="guardarActividad()">GUARDAR</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row clearfix js-sweetalert">
+
+    </div>
+
+</div>
+
+{% endblock content %}
+
+
+{% block js %}
+<!-- Jquery Core Js -->
+<script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap/js/bootstrap.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-select/js/bootstrap-select.js' %}"></script>
+<script src="{% static 'plugins/jquery-slimscroll/jquery.slimscroll.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.js' %}"></script>
+<script src="{% static 'plugins/dropzone/dropzone.js' %}"></script>
+<script src="{% static 'plugins/jquery-inputmask/jquery.inputmask.bundle.js' %}"></script>
+<script src="{% static 'plugins/multi-select/js/jquery.multi-select.js' %}"></script>
+<script src="{% static 'plugins/jquery-spinner/js/jquery.spinner.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-tagsinput/bootstrap-tagsinput.js' %}"></script>
+<script src="{% static 'plugins/nouislider/nouislider.js' %}"></script>
+<script src="{% static 'plugins/node-waves/waves.js' %}"></script>
+<script src="{% static 'plugins/autosize/autosize.js' %}"></script>
+<script src="{% static 'plugins/momentjs/moment.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+<script src="{% static 'plugins/sweetalert/sweetalert.min.js' %}"></script>
+<script src="{% static 'plugins/editable-table/mindmup-editabletable.js' %}"></script>
+<script src="{% static 'js/admin.js' %}"></script>
+<script src="{% static 'js/pages/tables/editable-table.js' %}"></script>
+<script src="{% static 'js/system/actividad.js' %}"></script>
+<script src="{% static 'js/pages/forms/basic-form-elements.js' %}"></script>
+<script src="{% static 'js/pages/forms/advanced-form-elements.js' %}"></script>
+<script src="{% static 'js/demo.js' %}"></script>
+{% endblock js %}

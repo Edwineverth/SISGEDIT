@@ -1,0 +1,136 @@
+<!-- Extendiendo de plantilla base -->
+{% extends 'base.html' %}
+<!-- Cargando archivos estaticos ccs, js y demas elementos para la pantilla html -->
+{% load staticfiles %}
+<!-- Cargando contenedor de estilos para procesar CSS -->
+{% block estilos %}
+    <link href="{% static 'plugins/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+    <!-- Waves Effect Css -->
+    <link href="{% static 'plugins/node-waves/waves.css' %}" rel="stylesheet" />
+    <!-- Animation Css -->
+    <link href="{% static 'plugins/animate-css/animate.css' %}" rel="stylesheet" />
+    <!-- JQuery DataTable Css -->
+    <link href="{% static 'plugins/jquery-datatable/skin/bootstrap/css/dataTables.bootstrap.css' %}" rel="stylesheet">
+    <!-- Custom Css -->
+    <link href="{% static 'css/style.css' %}" rel="stylesheet">
+    <!-- AdminBSB Themes. You can choose a theme from css/themes instead of get all themes -->
+    <link href="{% static 'css/themes/all-themes.css' %}" rel="stylesheet" />
+{% endblock estilos %}
+<!-- Cargando contenedor para cargar el panel de proceso a realizar -->
+{% block content %}
+    <div class="container-fluid">
+        <div class="block-header">
+            <h2>
+                FERIADOS
+            </h2>
+        </div>
+        <div class="row clearfix">
+            <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                <div class="card">
+                    <div class="header">
+                        <div class="row clearfix">
+                            <div class="col-lg-6 col-sm-6">
+                                <h2>
+                                    LISTADO
+                                </h2>
+                            </div>
+                            <!-- Establecer boton para añadir registros en el modelo de Cobertura -->
+                            <div class="icon-and-text-button-demo   col-lg-6 col-sm-6">
+                                <button type="button" class="btn btn-primary waves-effect" style="width: 25%" onclick="window.location='{% url 'feriados_insetar' %}'">
+                                    <i class="material-icons">control_point</i>
+                                    <span>Ingresar</span>
+                                </button>
+                                
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
+                                <thead>
+                                    <tr>
+                                        <th>ID#</th>
+                                        <th>NOMBRE</th>
+                                        <th>DESCRIPCIÓN</th>
+                                        <th>FECHA INICIO</th>
+                                        <th>FECHA FIN</th>
+                                        <th>ESTADO</th>
+                                        <th>EDIT</th>
+                                        <th>DELETE</th>
+                                    </tr>
+                                </thead>
+                                <tfoot>
+                                    <tr>
+                                        <th>ID#</th>
+                                        <th>NOMBRE</th>
+                                        <th>DESCRIPCIÓN</th>
+                                        <th>FECHA INICIO</th>
+                                        <th>FECHA FIN</th>
+                                        <th>ESTADO</th>
+                                        <th>EDIT</th>
+                                        <th>DELETE</th>
+                                    </tr>
+                                </tfoot>
+                                <tbody> 
+                                        <!-- Recorrido de lista de coberturas para presentar en una tabla -->                                             
+                                        {% for feriados in feriados_list %}
+                                            <tr> 
+                                                <td id="feriadosfila_sec{{feriados.secuencial}}">{{ forloop.counter }}</td>
+                                                <td>{{feriados.nombre}}</td>
+                                                <td>{{feriados.descripcion}}</td>
+                                                <td>{{feriados.fechainicio}}</td>
+                                                <td>{{feriados.fechafin}}</td>
+                                                     <!-- Comparación de los estados de true y false por activo e inactivo -->
+                                                    {% if feriados.estado == True %}
+                                                        <td>Activo</td>
+                                                    {% else %}
+                                                        <td>Inactivo</td>
+                                                    {% endif %}
+                                                <td>
+                                                    <!-- Estableciendo boton de edición que redirige a la clase feriados editar views -->
+                                                    <button style='border: 0; background: transparent' data-target='' class=""
+                                                        data-toggle='' onclick="window.location='{% url 'feriados_editar' feriados.secuencial %}'">
+                                                        <i class="material-icons">edit</i>
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <!-- Estableciendo boton de edición que redirige a la clase de feriados editar views -->
+                                                    <button style='border: 0; background: transparent' data-target='' class=""
+                                                        data-toggle='' onclick="window.location='{% url 'feriados_eliminar' feriados.secuencial %}'">
+                                                        <i class="material-icons">delete</i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}                                                            
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock content %}
+
+<!-- Estableciendo contenedor de archivos JS para establecer acciones del proceso -->
+{% block js %}
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-select/js/bootstrap-select.js' %}"></script>
+    <script src="{% static 'plugins/jquery-slimscroll/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'plugins/node-waves/waves.js' %}"></script>
+    <script src="{% static 'plugins/jquery-datatable/jquery.dataTables.js' %}"></script>
+    <script src="{% static 'plugins/jquery-datatable/skin/bootstrap/js/dataTables.bootstrap.js' %}"></script>
+    <script src="{% static 'plugins/jquery-datatable/extensions/export/dataTables.buttons.min.js' %}"></script>
+    <script src="{% static 'plugins/jquery-datatable/extensions/export/buttons.flash.min.js' %}"></script>
+    <script src="{% static 'plugins/jquery-datatable/extensions/export/jszip.min.js' %}"></script>
+    <script src="{% static 'plugins/jquery-datatable/extensions/export/pdfmake.min.js' %}"></script>
+    <script src="{% static 'plugins/jquery-datatable/extensions/export/vfs_fonts.js' %}"></script>
+    <script src="{% static 'plugins/jquery-datatable/extensions/export/buttons.html5.min.js' %}"></script>
+    <script src="{% static 'plugins/jquery-datatable/extensions/export/buttons.print.min.js' %}"></script>
+    <script src="{% static 'js/system/cobertura.js' %}"></script>
+    <script src="{% static 'js/admin.js' %}"></script>
+    <script src="{% static 'js/pages/tables/jquery-datatable.js' %}"></script>
+    <script src="{% static 'js/demo.js' %}"></script>
+{% endblock js %}
