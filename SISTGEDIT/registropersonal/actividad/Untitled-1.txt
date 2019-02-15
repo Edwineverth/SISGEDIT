@@ -1,0 +1,20 @@
+Cannot resolve keyword ' secuencial_usuario' into field. Choices are: 
+descripcion, 
+detalleactividad, 
+detalleplanificacionactividad, 
+nombre, 
+secuencial, 
+secuencial_cobertura, 
+secuencial_cobertura_id, 
+secuencial_requerido, 
+secuencial_requerido_id, 
+secuencial_usuario, 
+secuencial_usuario_id
+
+{'nombre': 'Reportar Seguros de Vida; Crecer', 
+'descripcion': 'Proceso para reportar seguros de vida en el sistema', 
+'secuencial_usuario__usuario': 'jaguilar', 
+'secuencial_cobertura__nombre': 'Oficina Matriz', 
+'secuencial_requerido__nombre': 'Aseguradora', 
+'detalleactividad__numerosemana': 1, 
+'detalleactividad__secuencial_tipoactividad': 1}, 

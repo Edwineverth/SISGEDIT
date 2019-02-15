@@ -46,41 +46,163 @@
 
                     </div>
                 </div>
+
+                {{actividad_detalle_tipo}}
+                
                 <div class="body">
-                    
-                    
-                    {% for actividad  in actividad_objeto %}
-                        
-                        {% for detalle in detalle_actividad %}
+
+                
+                    {% for duracion in duracion_list %}
+                        {% if duracion.nombre == "Mensuales" %}
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID#</th>
+                                            <th> ACTIVIDAD</th>
+                                            <th>COBERTURA</th>
+                                            <th>RESPONSABLE</th>
+                                            <th>REQUERIDO</th>
+                                            <th>SEM 1</th>
+                                            <th>SEM 2</th>
+                                            <th>SEM 3</th>
+                                            <th>SEM 4</th>
+                                            <th>SEM 5</th>
+
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>ID#</th>
+                                            <th style="padding-right:200px">ACTIVIDAD</th>
+                                            <th>COBERTURA</th>
+                                            <th>RESPONSABLE</th>
+                                            <th>REQUERIDO</th>
+                                            <th>SEM 1</th>
+                                            <th>SEM 2</th>
+                                            <th>SEM 3</th>
+                                            <th>SEM 4</th>
+                                            <th>SEM 5</th>
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        <!-- Recorrido de lista de coberturas para presentar en una tabla -->
+                                        {% for actividad in actividad_detalle_tipo %}
+                                            {% if duracion.secuencial == actividad.detalleactividad__secuencial_tipoactividad %}
+                                                <!-- Escribir codigo -->
+                                                <tr>
+                                                    <td id="cobarturafila_sec{{actividad.secuencial}}">{{ forloop.counter }}</td>
+                                                    <td>{{actividad.nombre}}</td>
+                                                    <td>{{actividad.secuencial_usuario__usuario}}</td>
+                                                    <td>{{actividad.secuencial_cobertura__nombre}}</td>
+                                                    <td>{{actividad.secuencial_requerido__nombre}}</td>
+                                                    
+                                                    {% if actividad.detalleactividad__numerosemana == 1 %}
+                                                        <th>ACTIVO</th>
+                                                        <th> - </th>
+                                                        <th> - </th>
+                                                        <th> - </th>
+                                                        <th> - </th>
+                                                    {% endif %}
+                                                    {% if actividad.detalleactividad__numerosemana == 2 %}
+                                                        <th> - </th>
+                                                        <th> ACTIVO </th>
+                                                        <th> - </th>
+                                                        <th> - </th>
+                                                        <th> - </th>
+                                                    {% endif %}
+                                                    {% if actividad.detalleactividad__numerosemana == 3 %}
+                                                        <th> - </th>
+                                                        <th> - </th>
+                                                        <th> ACTIVO </th>
+                                                        <th> - </th>
+                                                        <th> - </th>
+                                                    {% endif %}
+                                                    {% if actividad.detalleactividad__numerosemana == 4 %}
+                                                        <th> - </th>
+                                                        <th> - </th>
+                                                        <th> - </th>
+                                                        <th> ACTIVO </th>
+                                                        <th> - </th>
+                                                    {% endif %}
+                                                    {% if actividad.detalleactividad__numerosemana == 5 %}
+                                                        <th> - </th>
+                                                        <th> - </th>
+                                                        <th> - </th>
+                                                        <th> - </th>
+                                                        <th> ACTIVO </th>
+                                                    {% endif %}
+                                                </tr>
+                                            {% else %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% elif duracion.nombre == "Bimensuales"%}
+                            INICIA PROCESO BIMENSUAL
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
+                                    <thead>
+                                        <tr>
+                                            <th>ID#</th>
+                                            <th> ACTIVIDAD</th>
+                                            <th>COBERTURA</th>
+                                            <th>RESPONSABLE</th>
+                                            <th>REQUERIDO</th>
+                                            
+
+                                        </tr>
+                                    </thead>
+                                    <tfoot>
+                                        <tr>
+                                            <th>ID#</th>
+                                            <th style="padding-right:200px">ACTIVIDAD</th>
+                                            <th>COBERTURA</th>
+                                            <th>RESPONSABLE</th>
+                                            <th>REQUERIDO</th>
+                                            
+                                        </tr>
+                                    </tfoot>
+                                    <tbody>
+                                        {% for actividad in actividad_detalle_tipo %}
+                                            
+                                            {% if duracion.secuencial == actividad.detalleactividad__secuencial_tipoactividad %}
+                                                <!-- Escribir codigo de la del proceso -->
+                                                <tr>
+                                                    <td id="cobarturafila_sec{{actividad.secuencial}}">{{ forloop.counter }}</td>
+                                                    <td>{{actividad.nombre}}</td>
+                                                    <td>{{actividad.secuencial_usuario__usuario}}</td>
+                                                    <td>{{actividad.secuencial_cobertura__nombre}}</td>
+                                                    <td>{{actividad.secuencial_requerido__nombre}}</td>
+                                                    <td>{{actividad.detalleactividad__numerosemana}}</td>
+                                            
+                                                    </tr>
+                                                
+                                            {% endif %}
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
                             
-                            
-                            {% if detalle.tipoactividad =="Mensuales" %}
-                                
+                        {% elif duracion.nombre == "Trimestrales"%}
+                            INICIA PROCESO TRIMESTRAL
+                            {% for actividad in actividad_detalle_tipo %}
+                                {% if duracion.secuencial == actividad.detalleactividad__secuencial_tipoactividad %}
+                                    {{ forloop.counter }}    
+                                {% endif %}
+                            {% endfor %}
+                        {% elif duracion.nombre == "Cuatrimestrales"%}
+                            INICIA PROCESO CUATRIMESTRAL
+                            {% for actividad in actividad_detalle_tipo %}
+                                {% if duracion.secuencial == actividad.detalleactividad__secuencial_tipoactividad %}
+                                    {{ forloop.counter }}
+                                {% endif %}
+                            {% endfor %}
+                        {% endif %}
 
-                            {% elif detalle.tipoactividad =="Bimensuales"%}
-
-
-                            {% elif detalle.tipoactividad =="Trimestrales"%}
-                            
-
-                            {% elif detalle.tipoactividad =="Cuatrimestrales"%}
-
-
-                            {% elif detalle.tipoactividad =="Semestrales"%}
-
-
-                            {% elif detalle.tipoactividad =="Anuales"%}
-
-                            {% endif %}
-                                
-                                    
-
-                        {% endfor %}
-                            
                     {% endfor %}
-                        
-                    {{detalle_actividad}}
-                    
+
                     <div class="table-responsive">
                         <table class="table table-bordered table-striped table-hover js-basic-example dataTable">
                             <thead>
@@ -118,30 +240,30 @@
                             <tbody>
                                 <!-- Recorrido de lista de coberturas para presentar en una tabla -->
                                 {% for actividad in actividad_objeto %}
-                                    <tr>
-                                        <td id="cobarturafila_sec{{actividad.secuencial}}">{{ forloop.counter }}</td>
-                                        <td>{{actividad.nombre}}</td>
-                                        <td>{{actividad.cobertura}}</td>
-                                        <td>{{actividad.usuario}}</td>
-                                        <td>{{actividad.requerido}}</td>
-    
-                                        {% endif %}
-                                            
-                                        <td>
-                                            <!-- Estableciendo boton de edición que redirige a la clase actividad editar views -->
-                                            <button style='border: 0; background: transparent' data-target='' class=""
-                                                data-toggle='' onclick="alert('Prueba Editar')">
-                                                <i class="material-icons">edit</i>
-                                            </button>
-                                        </td>
-                                        <td>
-                                            <!-- Estableciendo boton de edición que redirige a la clase de actividad editar views -->
-                                            <button style='border: 0; background: transparent' data-target='' class=""
-                                                data-toggle='' onclick="alert('Prueba eliminar')">
-                                                <i class="material-icons">delete</i>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                <tr>
+                                    <td id="cobarturafila_sec{{actividad.secuencial}}">{{ forloop.counter }}</td>
+                                    <td>{{actividad.nombre}}</td>
+                                    <td>{{actividad.cobertura}}</td>
+                                    <td>{{actividad.usuario}}</td>
+                                    <td>{{actividad.requerido}}</td>
+
+
+
+                                    <td>
+                                        <!-- Estableciendo boton de edición que redirige a la clase actividad editar views -->
+                                        <button style='border: 0; background: transparent' data-target='' class=""
+                                            data-toggle='' onclick="alert('Prueba Editar')">
+                                            <i class="material-icons">edit</i>
+                                        </button>
+                                    </td>
+                                    <td>
+                                        <!-- Estableciendo boton de edición que redirige a la clase de actividad editar views -->
+                                        <button style='border: 0; background: transparent' data-target='' class=""
+                                            data-toggle='' onclick="alert('Prueba eliminar')">
+                                            <i class="material-icons">delete</i>
+                                        </button>
+                                    </td>
+                                </tr>
                                 {% endfor %}
                             </tbody>
                         </table>

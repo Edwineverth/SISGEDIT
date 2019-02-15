@@ -70,6 +70,15 @@ class ActividadLisView(ListView):
             'secuencial_tipoactividad__nombre').annotate(
             actividadp=F('secuencial_actividad__nombre'), tipoactividad=F(
                 'secuencial_tipoactividad__nombre'),)
+        ctx['actividad_detalle_tipo'] = Actividad.objects.all()\
+            .values('nombre',
+                    'descripcion',
+                    'secuencial_usuario__usuario',
+                    'secuencial_cobertura__nombre',
+                    'secuencial_requerido__nombre',
+                    'detalleactividad__numerosemana',
+                    'detalleactividad__secuencial_tipoactividad')
+        ctx['duracion_list'] = Tipoactividad.objects.all()
         return ctx
 
 
