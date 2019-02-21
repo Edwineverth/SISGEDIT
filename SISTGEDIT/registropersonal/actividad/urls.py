@@ -1,8 +1,10 @@
 from django.urls import path
 
-from .views import (ActividadFormulario, ActividadLisView, GuardarActividad,
-                    TipoactividadCreate, TipoactividadDelete,
-                    TipoactividadListar, TipoactividadUpdate)
+from .views import (ActividadFormulario, ActividadLisView, GenerarTabla,
+                    GuardarActividad, PlanificacionActividad,
+                    PlanificacionActividadFormulario, TipoactividadCreate,
+                    TipoactividadDelete, TipoactividadListar,
+                    TipoactividadUpdate)
 
 # from registropersonal.sistema.models import Persona, Usuario
 
@@ -19,4 +21,10 @@ urlpatterns = [
          name='tipoactividad_editar'),
     path('tipoactividad/eliminar/<int:pk>/', TipoactividadDelete.as_view(),
          name='tipoactividad_eliminar'),
+    path('planificacion/listar/', PlanificacionActividad.as_view(),
+         name='planificacion_listar'),
+    path('planificacion/insertar/', PlanificacionActividadFormulario.as_view(),
+         name='planificacion_insertar'),
+    path('planificacion/datostabla/', GenerarTabla.as_view(),
+         name='planificacion_generartabla'),
 ]

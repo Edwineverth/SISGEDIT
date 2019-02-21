@@ -4,14 +4,18 @@ import time
 
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import F
+from django.db.models import F, Q
+from django.http import JsonResponse
 from django.http import HttpResponse
 from django.urls import reverse_lazy
+from django.core import serializers
 from django.views.generic import (CreateView, DeleteView, ListView,
                                   TemplateView, UpdateView)
 
 from registropersonal.sistema.models import (Actividad, Cobertura,
-                                             Detalleactividad, Requerido,
+                                             Detalleactividad,
+                                             Detalleplanificacionactividad,
+                                             Planificacion, Requerido,
                                              Tipoactividad, Usuario)
 
 # Creaciòn de una actividad basada en 3 entidades de relaciòn
@@ -49,27 +53,56 @@ class TipoactividadDelete(DeleteView):
 # METODOS PARA LA GESTIÓN DE ACTIVIDADES
 
 
+class PlanificacionActividad(ListView):
+    template_name = 'planificacion/listar.html'
+    context_object_name = 'planificacion_listar'
+    model = Detalleplanificacionactividad
+
+
+class PlanificacionActividadFormulario(ListView):
+    template_name = 'planificacion/insertar.html'
+    context_object_name = 'planificacion_listar'
+    model = Detalleplanificacionactividad
+
+    def get_context_data(self, **kwargs):
+        fechaactual = time.strftime("%Y-%m-%d")
+        print(fechaactual)
+        ctx = super(PlanificacionActividadFormulario,
+                    self).get_context_data(**kwargs)
+        ctx['actividad_list'] = Actividad.objects.all()
+        ctx['planificacion_list'] = Planificacion.objects.all()
+        ctx['semana'] = Planificacion.objects.filter(
+            Q(fechainicio__lte=fechaactual) & Q(fechafin__gte=fechaactual))
+        ctx['semana2'] = Actividad.objects.all()\
+            .values('nombre',
+                    'detalleactividad__numerosemana',
+                    )\
+            .filter(Q(
+                detalleactividad__secuencial_tipoactividad=1) & Q(
+                detalleactividad__numerosemana=2))
+        return ctx
+
+
 class ActividadLisView(ListView):
-    template_name = 'actividad/listar.html'  # noqa
-    context_object_name = 'actividad_listar'  # noqa
-    model = Actividad  # noqa
+    template_name = 'actividad/listar.html'
+    context_object_name = 'actividad_listar'
+    model = Actividad
 
     def get_context_data(self, **kwargs):
         ctx = super(ActividadLisView, self).get_context_data(**kwargs)
-        ctx['actividad_objeto'] = Actividad.objects.all()\
-            .values('nombre',
+        ctx['actividad_objeto'] = Actividad.objects.all().order_by('nombre')\
+            .values('secuencial',
+                    'nombre',
                     'descripcion',
                     'secuencial_usuario__usuario',
                     'secuencial_cobertura__nombre',
-                    'secuencial_requerido__nombre')\
+                    'secuencial_requerido__nombre',
+                    'detalleactividad__numerosemana',
+                    'detalleactividad__secuencial_tipoactividad')\
+            .distinct('nombre')\
             .annotate(usuario=F('secuencial_usuario__usuario'),
                       cobertura=F('secuencial_cobertura__nombre'),
                       requerido=F('secuencial_requerido__nombre'), )
-        ctx['detalle_actividad'] = Detalleactividad.objects.all().values(
-            'numerosemana', 'secuencial_actividad__nombre',
-            'secuencial_tipoactividad__nombre').annotate(
-            actividadp=F('secuencial_actividad__nombre'), tipoactividad=F(
-                'secuencial_tipoactividad__nombre'),)
         ctx['actividad_detalle_tipo'] = Actividad.objects.all()\
             .values('nombre',
                     'descripcion',
@@ -79,6 +112,7 @@ class ActividadLisView(ListView):
                     'detalleactividad__numerosemana',
                     'detalleactividad__secuencial_tipoactividad')
         ctx['duracion_list'] = Tipoactividad.objects.all()
+        ctx['detalleactividad_list'] = Detalleactividad.objects.all()
         return ctx
 
 
@@ -92,7 +126,75 @@ class ActividadFormulario(ListView):
         context['cobertura_list'] = Cobertura.objects.all()
         context['requerido_list'] = Requerido.objects.all()
         context['tipoactividad_list'] = Tipoactividad.objects.all()
+        
         return context
+
+# Permite generar la tabla de actiidad mediante una
+# consulta por el numero de semana correspondiente.
+
+
+class GenerarTabla(TemplateView):
+
+    def get(self, request, *args, **kwargs):
+        try:
+            datos = json.loads(request.GET['actividad_mes'])
+            for actividad in datos['semana_mes']:
+                numerosemanames = actividad
+            print(numerosemanames)
+            datos = {}
+            semana = Actividad
+            if numerosemanames == 1:
+                semana = Actividad.objects.all()\
+                    .values('nombre',
+                            'detalleactividad__numerosemana',
+                            )\
+                    .filter(Q(
+                        detalleactividad__secuencial_tipoactividad=1) & Q(
+                        detalleactividad__numerosemana=1))
+            elif numerosemanames == 2:
+                semana = Actividad.objects.all()\
+                    .values('nombre',
+                            'detalleactividad__numerosemana',
+                            )\
+                    .filter(Q(
+                        detalleactividad__secuencial_tipoactividad=1) & Q(
+                        detalleactividad__numerosemana=2))
+            elif numerosemanames == 3:
+                semana = Actividad.objects.all()\
+                    .values('nombre',
+                            'detalleactividad__numerosemana',
+                            )\
+                    .filter(Q(
+                        detalleactividad__secuencial_tipoactividad=1) & Q(
+                        detalleactividad__numerosemana=3))
+            elif numerosemanames == 4:
+                semana = Actividad.objects.all()\
+                    .values('nombre',
+                            'detalleactividad__numerosemana',
+                            )\
+                    .filter(Q(
+                        detalleactividad__secuencial_tipoactividad=1) & Q(
+                        detalleactividad__numerosemana=4))
+            elif numerosemanames == 5:
+                semana = Actividad.objects.all()\
+                    .values('nombre',
+                            'detalleactividad__numerosemana',
+                            )\
+                    .filter(Q(
+                        detalleactividad__secuencial_tipoactividad=1) & Q(
+                        detalleactividad__numerosemana=5))
+            datos['semana'] = serializers.serialize('json', list(semana), fields=('nombre','detalleactividad__numerosemana'))
+            datos['result'] = "OK"
+            datos['message'] = "¡Proecso Actividad Extracción \
+                                guardado correctamente!"
+            return JsonResponse(datos)
+        except Exception as error:
+            print("Error al guardar-->transaccion" + str(error))
+            datos['message'] = "¡Ha ocurrido un error al procesar datos \
+                de la actividd!"
+            datos['result'] = "X"
+            return HttpResponse(
+                json.dumps(datos), content_type="application/json")
 
 
 class GuardarActividad(TemplateView):

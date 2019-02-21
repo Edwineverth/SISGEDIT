@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'registropersonal.requerido',
     'registropersonal.feriado',
     'registropersonal.actividad',
+    'registropersonal.actividad.templatetags',
 ]
 
 MIDDLEWARE = [

@@ -18,3 +18,39 @@ secuencial_usuario_id
 'secuencial_requerido__nombre': 'Aseguradora', 
 'detalleactividad__numerosemana': 1, 
 'detalleactividad__secuencial_tipoactividad': 1}, 
+
+
+class Counter:
+    count = 0
+
+    def increment(self):
+        self.count += 1
+        return ''
+
+    def decrement(self):
+        self.count -= 1
+        return ''
+
+    def double(self):
+        self.count *= 2
+        return ''
+
+    def nombre(self):
+        return "Hola tags"
+
+
+def nombre():
+    return "Hola tags"
+
+
+register.tag('counter', Counter)
+register.tag('n', nombre)
+{% for s in semana %}
+                        {{s.numerosemana}}
+                    {% endfor %}
+                    {{s.numerosemana}}
+                    {{semana1}}
+                    {{semana2}}
+                    {{semana3}}
+                    {{semana4}}
+                    {{semana5}}
