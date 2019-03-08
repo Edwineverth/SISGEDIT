@@ -3,12 +3,12 @@ import json
 import time
 
 from django.contrib import messages
+from django.core import serializers # noqa
+from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.models import F, Q
-from django.http import JsonResponse
-from django.http import HttpResponse
+from django.http import HttpResponse, JsonResponse
 from django.urls import reverse_lazy
-from django.core import serializers
 from django.views.generic import (CreateView, DeleteView, ListView,
                                   TemplateView, UpdateView)
 
@@ -126,7 +126,6 @@ class ActividadFormulario(ListView):
         context['cobertura_list'] = Cobertura.objects.all()
         context['requerido_list'] = Requerido.objects.all()
         context['tipoactividad_list'] = Tipoactividad.objects.all()
-        
         return context
 
 # Permite generar la tabla de actiidad mediante una
@@ -139,13 +138,55 @@ class GenerarTabla(TemplateView):
         try:
             datos = json.loads(request.GET['actividad_mes'])
             for actividad in datos['semana_mes']:
-                numerosemanames = actividad
+                numerosemanames = int(actividad)
             print(numerosemanames)
-            datos = {}
-            semana = Actividad
+            numerosemana = int(datos['semana'])
+            print('numero semana', numerosemana)
+            # Declaración de variables del sistema
+            datos_JSON = {}  # Arreglo de datos_JSON para solicitud
+            semana = Actividad.objects.all()  # Conjunto de datos_JSON por semana mes # noqa
+            semanaTipo = Actividad.objects.all()  # Conjunto de datos_JSON de actividades por semana tipo # noqa
+            semanaUnica = Actividad.objects.all()  # Conjunto de datos_JSON de actibidades unicas # noqa
+            fechaactual = time.strftime("%Y-%m-%d")
+            fechasemana_JSON = {}
+            fechasemana_queryset = Planificacion.objects.all().values('fechainicio','fechafin').filter(
+                        Q(fechainicio__lte=fechaactual) & Q(fechafin__gte=fechaactual) & Q(numerosemana=numerosemana))
+            for fecha in fechasemana_queryset:
+                fechasemana_JSON = {
+                    'fechainicio': str(fecha['fechainicio']),
+                    'fechafin': str(fecha['fechafin'])
+                }
+            # ORM para extraer las actividades recurrentes por periodos Bimensuales, Trimestrales, Cuatrimestrales, Semestrales y Anuales. # noqa
+            semanaTipo = Actividad.objects.all()\
+                .values('nombre',
+                        'secuencial_usuario__usuario',
+                        'secuencial_cobertura__nombre',
+                        'secuencial_requerido__nombre',
+                        'detalleactividad__numerosemana',
+                        )\
+                .filter(detalleactividad__numerosemana=numerosemana).exclude(
+                    detalleactividad__fechaproceso=fechaactual)
+            print(semanaTipo)
+            # ORM para exraer las actividades Unicas por periodos mensuales
+            semanaUnica = Actividad.objects.all()\
+                .values('nombre',
+                        'secuencial_usuario__usuario',
+                        'secuencial_cobertura__nombre',
+                        'secuencial_requerido__nombre',
+                        'detalleactividad__numerosemana',
+                        )\
+                .filter(Q(detalleactividad__numerosemana=numerosemana) & Q(
+                    detalleactividad__fechaproceso=fechaactual))
+            print(semanaUnica)
+            # SECUENCIA DE IF PARA IDENTIFICAR EL NUMERO DE SEMANA DEL MES QUE
+            # PERTENECE UNA ACTIVIDAD
             if numerosemanames == 1:
+                # print("entra a if")
                 semana = Actividad.objects.all()\
                     .values('nombre',
+                            'secuencial_usuario__usuario',
+                            'secuencial_cobertura__nombre',
+                            'secuencial_requerido__nombre',
                             'detalleactividad__numerosemana',
                             )\
                     .filter(Q(
@@ -154,6 +195,9 @@ class GenerarTabla(TemplateView):
             elif numerosemanames == 2:
                 semana = Actividad.objects.all()\
                     .values('nombre',
+                            'secuencial_usuario__usuario',
+                            'secuencial_cobertura__nombre',
+                            'secuencial_requerido__nombre',     
                             'detalleactividad__numerosemana',
                             )\
                     .filter(Q(
@@ -162,6 +206,9 @@ class GenerarTabla(TemplateView):
             elif numerosemanames == 3:
                 semana = Actividad.objects.all()\
                     .values('nombre',
+                            'secuencial_usuario__usuario',
+                            'secuencial_cobertura__nombre',
+                            'secuencial_requerido__nombre',     
                             'detalleactividad__numerosemana',
                             )\
                     .filter(Q(
@@ -170,6 +217,9 @@ class GenerarTabla(TemplateView):
             elif numerosemanames == 4:
                 semana = Actividad.objects.all()\
                     .values('nombre',
+                            'secuencial_usuario__usuario',
+                            'secuencial_cobertura__nombre',
+                            'secuencial_requerido__nombre',     
                             'detalleactividad__numerosemana',
                             )\
                     .filter(Q(
@@ -178,23 +228,32 @@ class GenerarTabla(TemplateView):
             elif numerosemanames == 5:
                 semana = Actividad.objects.all()\
                     .values('nombre',
+                            'secuencial_usuario__usuario',
+                            'secuencial_cobertura__nombre',
+                            'secuencial_requerido__nombre',     
                             'detalleactividad__numerosemana',
                             )\
                     .filter(Q(
                         detalleactividad__secuencial_tipoactividad=1) & Q(
                         detalleactividad__numerosemana=5))
-            datos['semana'] = serializers.serialize('json', list(semana), fields=('nombre','detalleactividad__numerosemana'))
-            datos['result'] = "OK"
-            datos['message'] = "¡Proecso Actividad Extracción \
+            # Guardar lista generada dentro de los datos_JSON
+            datos_JSON['semana'] = list(semana) # Transformar a lista el ORM obtenido # noqa
+            datos_JSON['semanatipo'] = list(semanaTipo)
+            datos_JSON['semanaunica'] = list(semanaUnica)
+            datos_JSON['semanames'] = fechasemana_JSON
+            datos_JSON['result'] = "OK" # Establecer un mensaje en el caso de un correcto proceso # noqa
+            datos_JSON['message'] = "¡Proecso Actividad Extracción \
                                 guardado correctamente!"
-            return JsonResponse(datos)
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+
         except Exception as error:
             print("Error al guardar-->transaccion" + str(error))
-            datos['message'] = "¡Ha ocurrido un error al procesar datos \
+            datos_JSON['message'] = "¡Ha ocurrido un error al procesar datos_JSON \
                 de la actividd!"
-            datos['result'] = "X"
+            datos_JSON['result'] = "X"
             return HttpResponse(
-                json.dumps(datos), content_type="application/json")
+                json.dumps(datos_JSON), content_type="application/json")
 
 
 class GuardarActividad(TemplateView):
@@ -297,3 +356,55 @@ class GuardarActividad(TemplateView):
             datos['result'] = "X"
             return HttpResponse(
                 json.dumps(datos), content_type="application/json")
+
+
+# Clase para guardar planificaciones dentro del sistema.
+
+class GuardarPlanificacion(TemplateView):
+    # Llamar al metodo para transacciones en base de datos
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        print("Entro a guardar planificación")
+        datosplanificacion = {}
+        _transaccion = transaction.savepoint()
+        try:
+            valor = request.POST.get('datosplaning', None)
+            print(valor)
+            datosplanificacion = json.loads(request.POST['datosplaning'])
+            print(datosplanificacion)
+            fechaactual = time.strftime("%Y-%m-%d")
+            print(fechaactual)
+            print('pasa')
+            semanaactividad = int(datosplanificacion["semana"])
+            print('pasa')
+            for planifica in datosplanificacion['planificacion']:
+                print('entra')
+                # print(planifica['actividad'])
+                actividad = planifica['actividad']
+                fechainicio = planifica['fechainicio']
+                fechafin = planifica['fechafin']
+                detalleplanificacion = Detalleplanificacionactividad(
+                    secuencial_actividad=Actividad.objects.get(
+                        nombre=actividad),
+                    secuencial_planificacion=Planificacion.objects.get(
+                        Q(fechainicio__lte=fechaactual) & Q(fechafin__gte=fechaactual) & Q(numerosemana=semanaactividad)), # noqa
+                    fechainicio=fechainicio, fechafin=fechafin)
+                detalleplanificacion.save()
+            transaction.savepoint_commit(_transaccion)
+            datosplanificacion['result'] = "OK"
+            datosplanificacion['message'] = "¡Registro de actividad \
+                                guardado correctamente!"
+            messages.add_message(request, messages.SUCCESS, datosplanificacion['message'])
+            # Responder solicitud pedida por AJAX
+            return HttpResponse(
+                json.dumps(datosplanificacion), content_type="application/json")
+        except Exception as error:
+            print("Error al guardar-->transaccion: " + str(error))
+            print(type(error))    # la instancia de excepción
+            print(error.args)     # argumentos guardados en .args
+            print(error) 
+            transaction.savepoint_rollback(_transaccion)
+            datosplanificacion['message'] = "¡Ha ocurrido un error al tratar de ingresar los datosplanificacion de la persona!"
+            datosplanificacion['error'] = "Transacción: " + str(error)
+            return HttpResponse(
+                json.dumps(datosplanificacion), content_type="application/json")

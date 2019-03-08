@@ -85,7 +85,7 @@ class Detalleplanificacionactividad(models.Model):
         db_column='secuencial_planificacion', default=1)
     fechainicio = models.DateField()
     fechafin = models.DateField()
-    estado = models.CharField(max_length=1)
+    estado = models.CharField(max_length=1, default='A')
 
     class Meta:  # noqa
         ordering = ["secuencial"]

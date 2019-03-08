@@ -4,7 +4,7 @@ from .views import (ActividadFormulario, ActividadLisView, GenerarTabla,
                     GuardarActividad, PlanificacionActividad,
                     PlanificacionActividadFormulario, TipoactividadCreate,
                     TipoactividadDelete, TipoactividadListar,
-                    TipoactividadUpdate)
+                    TipoactividadUpdate, GuardarPlanificacion)
 
 # from registropersonal.sistema.models import Persona, Usuario
 
@@ -27,4 +27,6 @@ urlpatterns = [
          name='planificacion_insertar'),
     path('planificacion/datostabla/', GenerarTabla.as_view(),
          name='planificacion_generartabla'),
+    path('planificacion/guardarplanificacion/', GuardarPlanificacion.as_view(),
+         name='planificacion_guardar'),
 ]

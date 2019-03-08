@@ -54,3 +54,8 @@ register.tag('n', nombre)
                     {{semana3}}
                     {{semana4}}
                     {{semana5}}
+
+
+
+
+<div class="input-daterange input-group" id="bs_datepicker_range_container"><div class="form-line"><input type="text" id="fechainicio_date" class="form-control" placeholder="Fecha Inicio..."></div><span class="input-group-addon">to</span><div class="form-line"><input type="text" id="fechafin_date" class="form-control" placeholder="Fecha Fin..."></div></div>

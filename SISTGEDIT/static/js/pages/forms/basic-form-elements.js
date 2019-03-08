@@ -37,4 +37,12 @@ $(function () {
         autoclose: true,
         container: '#bs_datepicker_range_container'
     });
+    $("#bs_datepicker_range_container1").datepicker({
+        autoclose: true,
+        container: "#bs_datepicker_range_container1"
+    });
+    $(".datepicker").datepicker({
+        autoclose: true,
+        container: ".datepicker"
+    });
 });
