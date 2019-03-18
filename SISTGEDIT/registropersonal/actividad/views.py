@@ -3,11 +3,11 @@ import json
 import time
 
 from django.contrib import messages
-from django.core import serializers # noqa
-from django.core.serializers.json import DjangoJSONEncoder
+from django.core import serializers  # noqa
+# from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.models import F, Q
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, ListView,
                                   TemplateView, UpdateView)
@@ -15,8 +15,8 @@ from django.views.generic import (CreateView, DeleteView, ListView,
 from registropersonal.sistema.models import (Actividad, Cobertura,
                                              Detalleactividad,
                                              Detalleplanificacionactividad,
-                                             Planificacion, Requerido,
-                                             Tipoactividad, Usuario)
+                                             Notasplanificacion, Planificacion,
+                                             Requerido, Tipoactividad, Usuario)
 
 # Creaciòn de una actividad basada en 3 entidades de relaciòn
 
@@ -56,9 +56,101 @@ class TipoactividadDelete(DeleteView):
 class PlanificacionActividad(ListView):
     template_name = 'planificacion/listar.html'
     context_object_name = 'planificacion_listar'
-    model = Detalleplanificacionactividad
+    model = Planificacion
 
 
+# GENERACION DE CRONOGRAMA DE ACTIVIDADES PARA REPORTES
+class CronogramaActividad(TemplateView):
+    def get(self, request, *args, **kwargs):
+        try:
+            datos_JSON = {}
+            planificacion_List = []
+            fechas_List = []
+            datos = json.loads(request.GET['planificacion'])
+            # print(datos)
+            secuencialDetallePlanificaicon = datos
+            fechas_QuerySet = Planificacion.objects.all().values('numerosemana', 'fechainicio', 'fechafin').filter(secuencial=secuencialDetallePlanificaicon) # noqa
+            for fechas in fechas_QuerySet:
+                fechas_List.append({
+                    'numerosemana': str(fechas['numerosemana']),
+                    'fechainicio': str(fechas['fechainicio']),
+                    'fechafin': str(fechas['fechafin'])
+                })
+            # print(fechas_List)
+            planificación_QuerySet = Actividad.objects.all()\
+                .values('nombre',
+                        'secuencial_usuario__usuario',
+                        'secuencial_cobertura__nombre',
+                        'secuencial_requerido__nombre',
+                        'detalleplanificacionactividad__fechainicio',
+                        'detalleplanificacionactividad__fechafin',
+                        )\
+                .filter(detalleplanificacionactividad__secuencial_planificacion=secuencialDetallePlanificaicon) # noqa
+            for planificacion in planificación_QuerySet:
+                planificacion_List.append({
+                    'nombre': str(planificacion['nombre']),
+                    'cobertura': str(planificacion['secuencial_cobertura__nombre']), # noqa
+                    'responsable': str(planificacion['secuencial_usuario__usuario']), # noqa
+                    'requerido': str(planificacion['secuencial_requerido__nombre']), # noqa
+                    'fechainicio': str(planificacion['detalleplanificacionactividad__fechainicio']), # noqa
+                    'fechafin': str(planificacion['detalleplanificacionactividad__fechafin']) # noqa
+                })
+            notap = Notasplanificacion.objects.filter(secuencial_planificacion=secuencialDetallePlanificaicon).count()
+            print('Notas planificacion', notap)
+            if notap == 1:
+                print("entra")
+                notaplanificar = Notasplanificacion.objects.all().values('nota').filter(secuencial_planificacion=secuencialDetallePlanificaicon)
+                datos_JSON['notaarea'] = list(notaplanificar)
+
+            datos_JSON['existenota'] = notap
+            datos_JSON['cronograma'] = planificacion_List
+            datos_JSON['fechas'] = fechas_List
+            datos_JSON['result'] = "OK" # Establecer un mensaje en el caso de un correcto proceso # noqa
+            datos_JSON['message'] = "¡Proecso Actividad Extracción \
+                                guardado correctamente!"
+            return HttpResponse(
+                    json.dumps(datos_JSON), content_type="application/json")
+        except Exception as error:
+            print("Error al guardar-->transaccion" + str(error))
+            datos_JSON['message'] = "¡Ha ocurrido un error al procesar datos_JSON \
+                de la actividd!"
+            datos_JSON['result'] = "X"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+
+
+class CronogramaGuardar(TemplateView):
+    @transaction.atomic
+    def get(self, request, *args, **kwargs):
+        _transaccion = transaction.savepoint()
+        try:
+            print("entra")
+            datos_JSON = {}
+            datos = json.loads(request.GET['cronograma'])
+            fechaactual = time.strftime("%Y-%m-%d")
+            idPlan = int(datos['idplanificacion'])
+            print(idPlan)
+            notasPlanificacion = Notasplanificacion(
+                nota=datos['notas'],
+                secuencial_planificacion=Planificacion.objects.get(pk=idPlan),
+                fechaproceso=fechaactual)
+            notasPlanificacion.save()
+            transaction.savepoint_commit(_transaccion)
+            datos_JSON['result'] = "OK"  # Establecer un mensaje en el caso de un correcto proceso # noqa
+            datos_JSON['message'] = "¡Proecso Nota guardado correctamente!"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+        except Exception as error:
+            print("Error al guardar-->transaccion" + str(error))
+            transaction.savepoint_rollback(_transaccion)
+            datos_JSON['message'] = "¡Ha ocurrido un error al procesar datos_JSON \
+                de la actividd!"
+            datos_JSON['result'] = "X"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+
+
+# CREACIÓN DE FORMULARIO DE ACTIVIDAD PARA LA PLANIFICACION
 class PlanificacionActividadFormulario(ListView):
     template_name = 'planificacion/insertar.html'
     context_object_name = 'planificacion_listar'
@@ -149,24 +241,25 @@ class GenerarTabla(TemplateView):
             semanaUnica = Actividad.objects.all()  # Conjunto de datos_JSON de actibidades unicas # noqa
             fechaactual = time.strftime("%Y-%m-%d")
             fechasemana_JSON = {}
-            fechasemana_queryset = Planificacion.objects.all().values('fechainicio','fechafin').filter(
-                        Q(fechainicio__lte=fechaactual) & Q(fechafin__gte=fechaactual) & Q(numerosemana=numerosemana))
+            fechasemana_queryset = Planificacion.objects.all().values('fechainicio','fechafin').filter( # noqa
+                        Q(fechainicio__lte=fechaactual) & Q(fechafin__gte=fechaactual) & Q(numerosemana=numerosemana)) # noqa
             for fecha in fechasemana_queryset:
                 fechasemana_JSON = {
                     'fechainicio': str(fecha['fechainicio']),
                     'fechafin': str(fecha['fechafin'])
                 }
             # ORM para extraer las actividades recurrentes por periodos Bimensuales, Trimestrales, Cuatrimestrales, Semestrales y Anuales. # noqa
+            numeroActividad = Detalleactividad.objects.all().filter(Q(numerosemana=numerosemana) & ~Q(secuencial_tipoactividad=7)).values_list('secuencial_actividad', flat=True) # noqa
+
+            print("lista actividad", list(numeroActividad))
             semanaTipo = Actividad.objects.all()\
                 .values('nombre',
                         'secuencial_usuario__usuario',
                         'secuencial_cobertura__nombre',
                         'secuencial_requerido__nombre',
-                        'detalleactividad__numerosemana',
-                        )\
-                .filter(detalleactividad__numerosemana=numerosemana).exclude(
-                    detalleactividad__fechaproceso=fechaactual)
-            print(semanaTipo)
+                        ).filter(secuencial__in=list(numeroActividad))
+
+            print("Semana tipo", semanaTipo)
             # ORM para exraer las actividades Unicas por periodos mensuales
             semanaUnica = Actividad.objects.all()\
                 .values('nombre',
@@ -176,7 +269,8 @@ class GenerarTabla(TemplateView):
                         'detalleactividad__numerosemana',
                         )\
                 .filter(Q(detalleactividad__numerosemana=numerosemana) & Q(
-                    detalleactividad__fechaproceso=fechaactual))
+                    detalleactividad__fechaproceso=fechaactual) & Q(
+                    detalleactividad__secuencial_tipoactividad=7))
             print(semanaUnica)
             # SECUENCIA DE IF PARA IDENTIFICAR EL NUMERO DE SEMANA DEL MES QUE
             # PERTENECE UNA ACTIVIDAD
@@ -197,7 +291,7 @@ class GenerarTabla(TemplateView):
                     .values('nombre',
                             'secuencial_usuario__usuario',
                             'secuencial_cobertura__nombre',
-                            'secuencial_requerido__nombre',     
+                            'secuencial_requerido__nombre',
                             'detalleactividad__numerosemana',
                             )\
                     .filter(Q(
@@ -208,7 +302,7 @@ class GenerarTabla(TemplateView):
                     .values('nombre',
                             'secuencial_usuario__usuario',
                             'secuencial_cobertura__nombre',
-                            'secuencial_requerido__nombre',     
+                            'secuencial_requerido__nombre',
                             'detalleactividad__numerosemana',
                             )\
                     .filter(Q(
@@ -219,7 +313,7 @@ class GenerarTabla(TemplateView):
                     .values('nombre',
                             'secuencial_usuario__usuario',
                             'secuencial_cobertura__nombre',
-                            'secuencial_requerido__nombre',     
+                            'secuencial_requerido__nombre',
                             'detalleactividad__numerosemana',
                             )\
                     .filter(Q(
@@ -230,7 +324,7 @@ class GenerarTabla(TemplateView):
                     .values('nombre',
                             'secuencial_usuario__usuario',
                             'secuencial_cobertura__nombre',
-                            'secuencial_requerido__nombre',     
+                            'secuencial_requerido__nombre',
                             'detalleactividad__numerosemana',
                             )\
                     .filter(Q(
@@ -368,8 +462,6 @@ class GuardarPlanificacion(TemplateView):
         datosplanificacion = {}
         _transaccion = transaction.savepoint()
         try:
-            valor = request.POST.get('datosplaning', None)
-            print(valor)
             datosplanificacion = json.loads(request.POST['datosplaning'])
             print(datosplanificacion)
             fechaactual = time.strftime("%Y-%m-%d")
@@ -394,17 +486,38 @@ class GuardarPlanificacion(TemplateView):
             datosplanificacion['result'] = "OK"
             datosplanificacion['message'] = "¡Registro de actividad \
                                 guardado correctamente!"
-            messages.add_message(request, messages.SUCCESS, datosplanificacion['message'])
+            messages.add_message(request, messages.SUCCESS, datosplanificacion['message']) # noqa
             # Responder solicitud pedida por AJAX
             return HttpResponse(
-                json.dumps(datosplanificacion), content_type="application/json")
+                json.dumps(datosplanificacion), content_type="application/json") # noqa
         except Exception as error:
             print("Error al guardar-->transaccion: " + str(error))
             print(type(error))    # la instancia de excepción
             print(error.args)     # argumentos guardados en .args
-            print(error) 
+            print(error)
             transaction.savepoint_rollback(_transaccion)
-            datosplanificacion['message'] = "¡Ha ocurrido un error al tratar de ingresar los datosplanificacion de la persona!"
+            datosplanificacion['message'] = "¡Ha ocurrido un error al tratar de ingresar los datosplanificacion de la persona!" # noqa
             datosplanificacion['error'] = "Transacción: " + str(error)
             return HttpResponse(
-                json.dumps(datosplanificacion), content_type="application/json")
+                json.dumps(datosplanificacion), content_type="application/json") # noqa
+
+
+# Clase para solicitud get en donde debuelve un JSON de respuesta
+"""
+class NombredelMetodo(TemplateView):
+    def get(self, request, *args, **kwargs):
+        datos_JSON = {}
+        try:
+            datos_JSON['result'] = "OK" # Establecer un mensaje en el caso de un correcto proceso # noqa
+            datos_JSON['message'] = "¡Proecso Actividad Extracción \
+                            guardado correctamente!"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+        except Exception as error:
+            print("Error al guardar-->transaccion" + str(error))
+            datos_JSON['message'] = "¡Ha ocurrido un error al procesar datos_JSON \
+                de la actividd!"
+            datos_JSON['result'] = "X"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+"""

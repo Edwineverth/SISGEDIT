@@ -1,10 +1,10 @@
 from django.urls import path
 
-from .views import (ActividadFormulario, ActividadLisView, GenerarTabla,
-                    GuardarActividad, PlanificacionActividad,
-                    PlanificacionActividadFormulario, TipoactividadCreate,
-                    TipoactividadDelete, TipoactividadListar,
-                    TipoactividadUpdate, GuardarPlanificacion)
+from .views import (ActividadFormulario, ActividadLisView, CronogramaActividad, CronogramaGuardar,
+                    GenerarTabla, GuardarActividad, GuardarPlanificacion,
+                    PlanificacionActividad, PlanificacionActividadFormulario,
+                    TipoactividadCreate, TipoactividadDelete,
+                    TipoactividadListar, TipoactividadUpdate)
 
 # from registropersonal.sistema.models import Persona, Usuario
 
@@ -29,4 +29,8 @@ urlpatterns = [
          name='planificacion_generartabla'),
     path('planificacion/guardarplanificacion/', GuardarPlanificacion.as_view(),
          name='planificacion_guardar'),
+    path('cronograma/generar/', CronogramaActividad.as_view(),
+         name='cronograma_generar'),
+    path('cronograma/guardar/', CronogramaGuardar.as_view(),
+         name='cronograma_guardar'),
 ]

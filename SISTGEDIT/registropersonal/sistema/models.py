@@ -85,8 +85,15 @@ class Detalleplanificacionactividad(models.Model):
         db_column='secuencial_planificacion', default=1)
     fechainicio = models.DateField()
     fechafin = models.DateField()
-    estado = models.CharField(max_length=1, default='A')
-
+    INICIADO = 'I'
+    EJECUTADO = 'E'
+    TERMINADO = 'T'
+    PROCESO = (
+        (INICIADO, 'Iniciado'),
+        (EJECUTADO, 'Ejecutando'),
+        (TERMINADO, 'Terminado'),
+        )
+    estado = models.CharField(max_length=1, choices=PROCESO, default=INICIADO,)
     class Meta:  # noqa
         ordering = ["secuencial"]
 
@@ -154,6 +161,21 @@ class Planificacion(models.Model):
 
     class Meta:  # noqa
         ordering = ["secuencial"]
+
+
+class Notasplanificacion(models.Model):
+    secuencial = models.AutoField(primary_key=True)
+    nota = models.TextField(null=True)
+    secuencial_planificacion = models.ForeignKey(
+        'Planificacion', models.DO_NOTHING,
+        db_column='secuencial_planificacion', default=1)
+    fechaproceso = models.DateField(blank=True, null=True)
+
+    class Meta:  # noqa
+        ordering = ["secuencial"]
+
+    def __str__(self):
+        return 'Nota: ' + self.nota
 
 
 class Requerido(models.Model):

@@ -1,5 +1,3 @@
-
-
 // Generacion de tabla a partir de los datos obtenidos del ORM 
 function startTime() {
     today = new Date();
@@ -51,7 +49,6 @@ function TablaJson(data){
     let nuevaFila=""; // Crear cadena de string que contendra el codigo HTML para ingresar los datos del ORM o actividad consultada 
     
     console.log(data['fechasemana'])
-    console.log(data['semanames']['fechainicio'])
     for(let i in data['semana']){
         nuevaFila="<tr>";
         nuevaFila+="<td>"+ data['semana'][i]['nombre'] +"</td>";
@@ -66,10 +63,13 @@ function TablaJson(data){
         nuevaFila+="<input type='date' name='datef"+i+"' id='fechaf_"+i+"' class='form-control date' min='"+data['semanames']['fechainicio'] +"' max='"+data['semanames']['fechafin'] +"' placeholder='Ex: 30/07/2016' required>";
         nuevaFila+="</td>";
         nuevaFila+="</tr>";
-        contador+=i;
+        contador+=(parseInt(i)+1);
         $("#mainTable tbody").append(nuevaFila);  // Añadir la cadana de string dentro del cuerpo de la tabla   
     } 
+    console.log(contador)
     // Será activo en el caso de que toque una semana en la cual este vigente una actividad tipo bimestral, timestral, cuatrimestra, semestral y anual
+    console.log(data['semanatipo'].length)
+    console.log(data['semanatipo'])
     if ((data['semanatipo'].length)>=1) {
         for(let i in data['semanatipo']){
             nuevaFila="<tr>";
@@ -79,10 +79,10 @@ function TablaJson(data){
             nuevaFila+="<td>"+ data['semanatipo'][i]['secuencial_requerido__nombre'] +"</td>";
             //Creación de los datapiker por cada una de las actividades
             nuevaFila+="<td >";
-            nuevaFila+="<input type='date' name='datei"+i+contador+"' id='fechai_"+i+contador+"' class='form-control date' placeholder='Ex: 30/07/2016' required>";
+            nuevaFila+="<input type='date' name='datei"+(i+contador)+"' id='fechai_"+(i+contador)+"' class='form-control date' min='"+data['semanames']['fechainicio'] +"' max='"+data['semanames']['fechafin'] +"' placeholder='Ex: 30/07/2016' required>";
             nuevaFila+="</td>";
             nuevaFila+="<td >";
-            nuevaFila+="<input type='date' name='datef"+i+contador+"' id='fechaf_"+i+contador+"' class='form-control date' placeholder='Ex: 30/07/2016' required>";
+            nuevaFila+="<input type='date' name='datef"+(i+contador)+"' id='fechaf_"+(i+contador)+"' class='form-control date' min='"+data['semanames']['fechainicio'] +"' max='"+data['semanames']['fechafin'] +"' placeholder='Ex: 30/07/2016' required>";
             nuevaFila+="</td>";
             nuevaFila+="</tr>";
             contador+=i;
@@ -100,16 +100,17 @@ function TablaJson(data){
             nuevaFila+="<td>"+ data['semanaunica'][i]['secuencial_requerido__nombre'] +"</td>";
             //Creación de los datapiker por cada una de las actividades
             nuevaFila+="<td >";
-            nuevaFila+="<input type='date' name='datei"+i+contador+"' id='fechai_"+i+contador+"' class='form-control date' placeholder='Ex: 30/07/2016' required>";
+            nuevaFila+="<input type='date' name='datei"+(i+contador)+"' id='fechai_"+(i+contador)+"' class='form-control date' min='"+data['semanames']['fechainicio'] +"' max='"+data['semanames']['fechafin'] +"' placeholder='Ex: 30/07/2016' required>";
             nuevaFila+="</td>";
             nuevaFila+="<td >";
-            nuevaFila+="<input type='date' name='datef"+i+contador+"' id='fechaf_"+i+contador+"' class='form-control date' placeholder='Ex: 30/07/2016' required>";
+            nuevaFila+="<input type='date' name='datef"+(i+contador)+"' id='fechaf_"+(i+contador)+"' class='form-control date' min='"+data['semanames']['fechainicio'] +"' max='"+data['semanames']['fechafin'] +"' placeholder='Ex: 30/07/2016' required>";
             nuevaFila+="</td>";
             nuevaFila+="</tr>";
             contador+=i;
             $("#mainTable tbody").append(nuevaFila);
         }
     }
+    contador = 0
     
     //$("#mainTable tbody").append(nuevaFila);
 
@@ -137,18 +138,20 @@ function getCookie(name) {
 
 $("#my_form").submit(function(event){
     event.preventDefault(); //prevent default action 
-    var post_url = $(this).attr("action"); //get form action url
-    var request_method = $(this).attr("method"); //get form GET/POST method
+    let post_url = $(this).attr("action"); //get form action url
+    let request_method = $(this).attr("method"); //get form GET/POST method
     //var form_data = new FormData(this); //Encode form elements for submission
+    let bandera = 0
     
     let semana = document.getElementById('semana').innerHTML;
-    var datos = {
+    let datos = {
         'planificacion': [],
         'semana': parseInt(semana)
     };
     let fechainicio_id
     let fechafin_id
-
+    let nfilastbody =  $("#mainTable tbody tr").length
+    console.log(nfilastbody)
     $("#mainTable tbody tr").each(function (index) {
         let actividad, cobertura, responsable, requerido, fechainicio, fechafin, vid;
         $(this).children("td").each(function (index2) { // Recorre cada fila y a su vez cada columna
@@ -184,9 +187,9 @@ $("#my_form").submit(function(event){
         let fecha1 = moment(fechainicio);
         let fecha2 = moment(fechafin);
 
-        console.log(fecha2.diff(fecha1, 'days'), ' dias de diferencia');
+        //console.log(fecha2.diff(fecha1, 'days'), ' dias de diferencia');
 
-        console.log(actividad + ' - ' + cobertura + ' - ' + responsable + ' - ' + requerido + ' - ' + fechainicio + ' - ' + fechafin);
+        //console.log(actividad + ' - ' + cobertura + ' - ' + responsable + ' - ' + requerido + ' - ' + fechainicio + ' - ' + fechafin);
         // Añade cada uno de los datos obtenidos de la tabla dentro del arreglo de datos creando un JSON
         if(fecha2.diff(fecha1, 'days')>=0){
             console.log('Fila de fechas correctas')
@@ -200,50 +203,59 @@ $("#my_form").submit(function(event){
                 'fechainicio': fechainicio,
                 'fechafin': fechafin
             });
-            // ejecucion de función Ajax para guardar los datos obtenidos de la tabla
-            $.ajax({
-                type: request_method,
-                url: post_url,
-                data: {'datosplaning':JSON.stringify(datos), csrfmiddlewaretoken: csrftoken},
-                success: function (data) {
-                    if (data['result'] == "OK") {
-                        console.log('Proceso completado')
-                        swal("Planificación Creada Correctamente!", "Da Clic en el boton para finalizar!", "success");
-                        //swal("Planificación Creada Correctamente!", "Da Clic en el boton para finalizar!", "success");
-                        //TablaJson(data) // Se ejecutará en el caso de que el proceso sea completado
-                    } else {
-                        console.log("¡ Error en la transacción ")
-                        swal ( "Oops" ,  "A ocurrido un error en el proceso!: \n Descripción: "+ data['error'] ,  "error" )
-                    }
-                },
-                error: function( jqXHR, textStatus, errorThrown ) {
-                    if (jqXHR.status === 0) {
-                        swal("Error al intentar Conectarse: Verifique su conexion a Internet.", "error");
-                    } else if (jqXHR.status == 404) {
-                        swal("La Pagina solicitada no fue encontrada [404].", "error");    
-                    } else if (jqXHR.status == 500) {
-                        swal("Erro Interno [500].", "error");    
-                    } else if (textStatus === 'parsererror') {
-                        swal("Error en el retorno de Datos. [parseJson]", "error");
-                    } else if (textStatus === 'timeout') {
-                        swal('Tiempo de Espera agotado', "error");
-                    } else if (textStatus === 'abort') {
-                        swal("Solicitud Abortada. [Ajax Request].", "error");
-                    } else {
-                        swal('Error desconocido: ' + jqXHR.responseText, "error");
-                    }//end if 
-        
-                }//end error
-            })
-
+            bandera+= 1;
         }else{
             $('#'+fechainicio_id).css('border-color', 'red');
             $('#'+fechafin_id).css('border-color', 'red');
             showNotification('bg-red', 'Existen fechas fuera de rango. Verificar los datos insertados..!!','top', 'right', 'animated fadeInRight', 'animated fadeOutRight');
+            bandera-= 0;
         }
         
     })
-    var csrftoken = getCookie('csrftoken'); // Obtener el Token correspondiente
+    console.log(datos);
+    if (bandera == nfilastbody){
+        bandera = 0; 
+        console.log("Pasa");
+        // ejecucion de función Ajax para guardar los datos obtenidos de la tabla
+        let csrftoken = getCookie('csrftoken'); // Obtener el Token correspondiente
+        $.ajax({
+            type: request_method,
+            url: post_url,
+            data: {'datosplaning':JSON.stringify(datos), csrfmiddlewaretoken: csrftoken},
+            success: function (data) {
+                if (data['result'] == "OK") {
+                    console.log('Proceso completado')
+                    swal("Planificación Creada Correctamente!", "Da Clic en el boton para finalizar!", "success");
+                    //swal("Planificación Creada Correctamente!", "Da Clic en el boton para finalizar!", "success");
+                    //TablaJson(data) // Se ejecutará en el caso de que el proceso sea completado
+                } else {
+                    console.log("¡ Error en la transacción ")
+                    swal ( "Oops" ,  "A ocurrido un error en el proceso!: \n Descripción: "+ data['error'] ,  "error" )
+                }
+            },
+            error: function( jqXHR, textStatus, errorThrown ) {
+                if (jqXHR.status === 0) {
+                    swal("Error al intentar Conectarse: Verifique su conexion a Internet.", "error");
+                } else if (jqXHR.status == 404) {
+                    swal("La Pagina solicitada no fue encontrada [404].", "error");    
+                } else if (jqXHR.status == 500) {
+                    swal("Erro Interno [500].", "error");    
+                } else if (textStatus === 'parsererror') {
+                    swal("Error en el retorno de Datos. [parseJson]", "error");
+                } else if (textStatus === 'timeout') {
+                    swal('Tiempo de Espera agotado', "error");
+                } else if (textStatus === 'abort') {
+                    swal("Solicitud Abortada. [Ajax Request].", "error");
+                } else {
+                    swal('Error desconocido: ' + jqXHR.responseText, "error");
+                }//end if 
+    
+            }//end error
+        })
+    }else{
+        console.log("No se realizaro proceso")
+    }
+    
     
     
 });
