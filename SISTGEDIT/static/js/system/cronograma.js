@@ -61,6 +61,7 @@ function generarTablaPlanificacion(data) {
         $("#botondiv").show();
         $("#tabladiv").show();
         $('#mainTable tbody tr').remove(); // Limpiar cada una de las filas que contiene la tabla 
+        $('#tablanota tbody tr').remove();
         $('#mainTable thead tr').remove();
         let contador = 0 // Creacion de contador para obtener el numero de filas
         let nuevaFila_TBody = ""; // Crear cadena de string que contendra el codigo HTML para ingresar los datos del ORM o actividad consultada 
@@ -88,6 +89,16 @@ function generarTablaPlanificacion(data) {
             nuevaFilaNota += "<td class="+'bodycrono'+">" + notaTexto + "</td>";
             nuevaFilaNota += "</tr>";
             $("#tablanota tbody").append(nuevaFilaNota);
+            $("#imprimir_boton").prop("disabled",false);
+        }else{
+            console.log("no existe nota")
+            $("#botondiv").show();
+            $('#notasCronograma').prop('readonly', false);
+            $("#notadiv").show();
+            $("#notatabladiv").hide();
+            $('#notasCronograma').val("");
+            $('#imprimir_boton').prop('disabled', true);
+            
         }
         
         nuevaFila_THead = "<tr>";
@@ -133,9 +144,8 @@ function generarTablaPlanificacion(data) {
                 }
             }
             nuevaFila_TBody += "</tr>";
-    
             $("#mainTable tbody").append(nuevaFila_TBody);  // Añadir la cadana de string dentro del cuerpo de la tabla   
-            $("#imprimir_boton").prop("disabled",false);
+            
         }
     }else{
         console.log("no cumple proceso")
@@ -238,6 +248,6 @@ function impresionCronograma() {
         html: '#tablanota',
         useCss: true,
     });
-    doc.save('table.pdf');
+    doc.save('Cronograma_Actividad.pdf');
 }
 var doc = new jsPDF()

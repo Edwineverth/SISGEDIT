@@ -1,14 +1,21 @@
 # from django.shortcuts import render
+import datetime
 import json
 import time
 
+from braces.views import GroupRequiredMixin, LoginRequiredMixin
+# pip install django-braces
 from django.contrib import messages
+# from django.contrib.auth.decorators import login_required
+# from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.decorators import permission_required
 from django.core import serializers  # noqa
 # from django.core.serializers.json import DjangoJSONEncoder
 from django.db import transaction
 from django.db.models import F, Q
 from django.http import HttpResponse
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DeleteView, ListView,
                                   TemplateView, UpdateView)
 
@@ -18,140 +25,78 @@ from registropersonal.sistema.models import (Actividad, Cobertura,
                                              Notasplanificacion, Planificacion,
                                              Requerido, Tipoactividad, Usuario)
 
+# @login_required(login_url='/accounts/login')
 # Creaciòn de una actividad basada en 3 entidades de relaciòn
 
 # METODOS PARA LA GESTIÓN DE TIPO ACTIVIDADES
+"""
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+class MyView(LoginRequiredMixin, View):
+    login_url = '/login/'
+    redirect_field_name = 'redirect_to'
+"""
 
 
-class TipoactividadCreate(CreateView):
+class TipoactividadCreate(LoginRequiredMixin, CreateView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
     model = Tipoactividad
     fields = ['nombre', 'descripcion']
     template_name = 'actividad/tipoactividad/insertar.html'
     success_url = reverse_lazy('tipoactividad_listar')
 
+    @method_decorator(permission_required('sistema.add_tipoactividad', reverse_lazy('home'))) # noqa
+    def dispatch(self, *args, **kwargs):
+        return super(TipoactividadCreate, self).dispatch(*args, **kwargs)
 
-class TipoactividadListar(ListView):
+
+class TipoactividadListar(LoginRequiredMixin, ListView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
     context_object_name = 'tipoactividad_list'
     model = Tipoactividad
     template_name = 'actividad/tipoactividad/listar.html'
 
 
-class TipoactividadUpdate(UpdateView):
+class TipoactividadUpdate(LoginRequiredMixin, UpdateView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
     model = Tipoactividad
     template_name = 'actividad/tipoactividad/actualizar.html'
     fields = ['nombre', 'descripcion']
     success_url = reverse_lazy('tipoactividad_listar')
+    @method_decorator(permission_required('sistema.change_tipoactividad', reverse_lazy('home'))) # noqa
+    def dispatch(self, *args, **kwargs):
+        return super(TipoactividadUpdate, self).dispatch(*args, **kwargs)
 
 
-class TipoactividadDelete(DeleteView):
+class TipoactividadDelete(LoginRequiredMixin, DeleteView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
     model = Tipoactividad
     context_object_name = "tipoactividad"
     template_name = 'actividad/tipoactividad/eliminar.html'
     success_url = reverse_lazy('tipoactividad_listar')
 
+    @method_decorator(permission_required('sistema.delete_tipoactividad', reverse_lazy('home'))) # noqa
+    def dispatch(self, *args, **kwargs):
+        return super(TipoactividadDelete, self).dispatch(*args, **kwargs)
 
 # METODOS PARA LA GESTIÓN DE ACTIVIDADES
+""" # noqa
+***********************************************************************
+***********************************************************************
+GESTIÓN DE ACTIVIDADES - PLANIFICACIÓN
+***********************************************************************
+"""
 
 
-class PlanificacionActividad(ListView):
-    template_name = 'planificacion/listar.html'
-    context_object_name = 'planificacion_listar'
-    model = Planificacion
-
-
-# GENERACION DE CRONOGRAMA DE ACTIVIDADES PARA REPORTES
-class CronogramaActividad(TemplateView):
-    def get(self, request, *args, **kwargs):
-        try:
-            datos_JSON = {}
-            planificacion_List = []
-            fechas_List = []
-            datos = json.loads(request.GET['planificacion'])
-            # print(datos)
-            secuencialDetallePlanificaicon = datos
-            fechas_QuerySet = Planificacion.objects.all().values('numerosemana', 'fechainicio', 'fechafin').filter(secuencial=secuencialDetallePlanificaicon) # noqa
-            for fechas in fechas_QuerySet:
-                fechas_List.append({
-                    'numerosemana': str(fechas['numerosemana']),
-                    'fechainicio': str(fechas['fechainicio']),
-                    'fechafin': str(fechas['fechafin'])
-                })
-            # print(fechas_List)
-            planificación_QuerySet = Actividad.objects.all()\
-                .values('nombre',
-                        'secuencial_usuario__usuario',
-                        'secuencial_cobertura__nombre',
-                        'secuencial_requerido__nombre',
-                        'detalleplanificacionactividad__fechainicio',
-                        'detalleplanificacionactividad__fechafin',
-                        )\
-                .filter(detalleplanificacionactividad__secuencial_planificacion=secuencialDetallePlanificaicon) # noqa
-            for planificacion in planificación_QuerySet:
-                planificacion_List.append({
-                    'nombre': str(planificacion['nombre']),
-                    'cobertura': str(planificacion['secuencial_cobertura__nombre']), # noqa
-                    'responsable': str(planificacion['secuencial_usuario__usuario']), # noqa
-                    'requerido': str(planificacion['secuencial_requerido__nombre']), # noqa
-                    'fechainicio': str(planificacion['detalleplanificacionactividad__fechainicio']), # noqa
-                    'fechafin': str(planificacion['detalleplanificacionactividad__fechafin']) # noqa
-                })
-            notap = Notasplanificacion.objects.filter(secuencial_planificacion=secuencialDetallePlanificaicon).count()
-            print('Notas planificacion', notap)
-            if notap == 1:
-                print("entra")
-                notaplanificar = Notasplanificacion.objects.all().values('nota').filter(secuencial_planificacion=secuencialDetallePlanificaicon)
-                datos_JSON['notaarea'] = list(notaplanificar)
-
-            datos_JSON['existenota'] = notap
-            datos_JSON['cronograma'] = planificacion_List
-            datos_JSON['fechas'] = fechas_List
-            datos_JSON['result'] = "OK" # Establecer un mensaje en el caso de un correcto proceso # noqa
-            datos_JSON['message'] = "¡Proecso Actividad Extracción \
-                                guardado correctamente!"
-            return HttpResponse(
-                    json.dumps(datos_JSON), content_type="application/json")
-        except Exception as error:
-            print("Error al guardar-->transaccion" + str(error))
-            datos_JSON['message'] = "¡Ha ocurrido un error al procesar datos_JSON \
-                de la actividd!"
-            datos_JSON['result'] = "X"
-            return HttpResponse(
-                json.dumps(datos_JSON), content_type="application/json")
-
-
-class CronogramaGuardar(TemplateView):
-    @transaction.atomic
-    def get(self, request, *args, **kwargs):
-        _transaccion = transaction.savepoint()
-        try:
-            print("entra")
-            datos_JSON = {}
-            datos = json.loads(request.GET['cronograma'])
-            fechaactual = time.strftime("%Y-%m-%d")
-            idPlan = int(datos['idplanificacion'])
-            print(idPlan)
-            notasPlanificacion = Notasplanificacion(
-                nota=datos['notas'],
-                secuencial_planificacion=Planificacion.objects.get(pk=idPlan),
-                fechaproceso=fechaactual)
-            notasPlanificacion.save()
-            transaction.savepoint_commit(_transaccion)
-            datos_JSON['result'] = "OK"  # Establecer un mensaje en el caso de un correcto proceso # noqa
-            datos_JSON['message'] = "¡Proecso Nota guardado correctamente!"
-            return HttpResponse(
-                json.dumps(datos_JSON), content_type="application/json")
-        except Exception as error:
-            print("Error al guardar-->transaccion" + str(error))
-            transaction.savepoint_rollback(_transaccion)
-            datos_JSON['message'] = "¡Ha ocurrido un error al procesar datos_JSON \
-                de la actividd!"
-            datos_JSON['result'] = "X"
-            return HttpResponse(
-                json.dumps(datos_JSON), content_type="application/json")
-
-
-# CREACIÓN DE FORMULARIO DE ACTIVIDAD PARA LA PLANIFICACION
-class PlanificacionActividadFormulario(ListView):
+# PRESENTACIÓN DE "GENERAR PLANIFICACIÓN"
+class PlanificacionActividadFormulario(LoginRequiredMixin, GroupRequiredMixin, ListView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
+    group_required = 'jefesistemas'
     template_name = 'planificacion/insertar.html'
     context_object_name = 'planificacion_listar'
     model = Detalleplanificacionactividad
@@ -163,6 +108,10 @@ class PlanificacionActividadFormulario(ListView):
                     self).get_context_data(**kwargs)
         ctx['actividad_list'] = Actividad.objects.all()
         ctx['planificacion_list'] = Planificacion.objects.all()
+        ctx['usuario_list'] = Usuario.objects.all()
+        ctx['cobertura_list'] = Cobertura.objects.all()
+        ctx['requerido_list'] = Requerido.objects.all()
+        ctx['tipoactividad_list'] = Tipoactividad.objects.all()
         ctx['semana'] = Planificacion.objects.filter(
             Q(fechainicio__lte=fechaactual) & Q(fechafin__gte=fechaactual))
         ctx['semana2'] = Actividad.objects.all()\
@@ -175,65 +124,20 @@ class PlanificacionActividadFormulario(ListView):
         return ctx
 
 
-class ActividadLisView(ListView):
-    template_name = 'actividad/listar.html'
-    context_object_name = 'actividad_listar'
-    model = Actividad
-
-    def get_context_data(self, **kwargs):
-        ctx = super(ActividadLisView, self).get_context_data(**kwargs)
-        ctx['actividad_objeto'] = Actividad.objects.all().order_by('nombre')\
-            .values('secuencial',
-                    'nombre',
-                    'descripcion',
-                    'secuencial_usuario__usuario',
-                    'secuencial_cobertura__nombre',
-                    'secuencial_requerido__nombre',
-                    'detalleactividad__numerosemana',
-                    'detalleactividad__secuencial_tipoactividad')\
-            .distinct('nombre')\
-            .annotate(usuario=F('secuencial_usuario__usuario'),
-                      cobertura=F('secuencial_cobertura__nombre'),
-                      requerido=F('secuencial_requerido__nombre'), )
-        ctx['actividad_detalle_tipo'] = Actividad.objects.all()\
-            .values('nombre',
-                    'descripcion',
-                    'secuencial_usuario__usuario',
-                    'secuencial_cobertura__nombre',
-                    'secuencial_requerido__nombre',
-                    'detalleactividad__numerosemana',
-                    'detalleactividad__secuencial_tipoactividad')
-        ctx['duracion_list'] = Tipoactividad.objects.all()
-        ctx['detalleactividad_list'] = Detalleactividad.objects.all()
-        return ctx
-
-
-class ActividadFormulario(ListView):
-    template_name = "actividad/insertar.html"
-    context_object_name = "usuario_list"
-    model = Usuario
-
-    def get_context_data(self, **kwargs):
-        context = super(ActividadFormulario, self).get_context_data(**kwargs)
-        context['cobertura_list'] = Cobertura.objects.all()
-        context['requerido_list'] = Requerido.objects.all()
-        context['tipoactividad_list'] = Tipoactividad.objects.all()
-        return context
-
-# Permite generar la tabla de actiidad mediante una
-# consulta por el numero de semana correspondiente.
-
-
-class GenerarTabla(TemplateView):
+# Genera la tabla de actividades mediante petición AJAX--
+class GenerarTabla(LoginRequiredMixin, GroupRequiredMixin,  TemplateView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
+    group_required = 'jefesistemas'
 
     def get(self, request, *args, **kwargs):
         try:
             datos = json.loads(request.GET['actividad_mes'])
             for actividad in datos['semana_mes']:
                 numerosemanames = int(actividad)
-            print(numerosemanames)
+            # print(numerosemanames)
             numerosemana = int(datos['semana'])
-            print('numero semana', numerosemana)
+            # print('numero semana', numerosemana)
             # Declaración de variables del sistema
             datos_JSON = {}  # Arreglo de datos_JSON para solicitud
             semana = Actividad.objects.all()  # Conjunto de datos_JSON por semana mes # noqa
@@ -250,8 +154,7 @@ class GenerarTabla(TemplateView):
                 }
             # ORM para extraer las actividades recurrentes por periodos Bimensuales, Trimestrales, Cuatrimestrales, Semestrales y Anuales. # noqa
             numeroActividad = Detalleactividad.objects.all().filter(Q(numerosemana=numerosemana) & ~Q(secuencial_tipoactividad=7)).values_list('secuencial_actividad', flat=True) # noqa
-
-            print("lista actividad", list(numeroActividad))
+            existePlanificacion = Detalleplanificacionactividad.objects.filter(secuencial_planificacion=Planificacion.objects.get(Q(fechainicio__lte=fechaactual) & Q(fechafin__gte=fechaactual) & Q(numerosemana=numerosemana))).count()
             semanaTipo = Actividad.objects.all()\
                 .values('nombre',
                         'secuencial_usuario__usuario',
@@ -259,7 +162,6 @@ class GenerarTabla(TemplateView):
                         'secuencial_requerido__nombre',
                         ).filter(secuencial__in=list(numeroActividad))
 
-            print("Semana tipo", semanaTipo)
             # ORM para exraer las actividades Unicas por periodos mensuales
             semanaUnica = Actividad.objects.all()\
                 .values('nombre',
@@ -271,7 +173,6 @@ class GenerarTabla(TemplateView):
                 .filter(Q(detalleactividad__numerosemana=numerosemana) & Q(
                     detalleactividad__fechaproceso=fechaactual) & Q(
                     detalleactividad__secuencial_tipoactividad=7))
-            print(semanaUnica)
             # SECUENCIA DE IF PARA IDENTIFICAR EL NUMERO DE SEMANA DEL MES QUE
             # PERTENECE UNA ACTIVIDAD
             if numerosemanames == 1:
@@ -331,6 +232,7 @@ class GenerarTabla(TemplateView):
                         detalleactividad__secuencial_tipoactividad=1) & Q(
                         detalleactividad__numerosemana=5))
             # Guardar lista generada dentro de los datos_JSON
+            datos_JSON['existeplanificacion'] = existePlanificacion
             datos_JSON['semana'] = list(semana) # Transformar a lista el ORM obtenido # noqa
             datos_JSON['semanatipo'] = list(semanaTipo)
             datos_JSON['semanaunica'] = list(semanaUnica)
@@ -349,8 +251,180 @@ class GenerarTabla(TemplateView):
             return HttpResponse(
                 json.dumps(datos_JSON), content_type="application/json")
 
+# MUESTRA LA GENERACIÓN DEL CRONOGRAMA
 
-class GuardarActividad(TemplateView):
+
+class PlanificacionActividad(LoginRequiredMixin, GroupRequiredMixin, ListView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
+    group_required = 'jefesistemas'
+    template_name = 'planificacion/listar.html'
+    context_object_name = 'planificacion_listar'
+    model = Planificacion
+
+
+# GENERACION DE CRONOGRAMA DE ACTIVIDADES PARA REPORTES
+
+
+class CronogramaActividad(LoginRequiredMixin, GroupRequiredMixin, TemplateView): # noqa
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
+    group_required = 'jefesistemas'
+
+    def get(self, request, *args, **kwargs):
+        try:
+            datos_JSON = {}
+            planificacion_List = []
+            fechas_List = []
+            datos = json.loads(request.GET['planificacion'])
+            print(datos)
+            secuencialDetallePlanificaicon = datos
+            fechas_QuerySet = Planificacion.objects.all().values('numerosemana', 'fechainicio', 'fechafin').filter(secuencial=secuencialDetallePlanificaicon)  # noqa
+            for fechas in fechas_QuerySet:
+                fechas_List.append({
+                    'numerosemana': str(fechas['numerosemana']),
+                    'fechainicio': str(fechas['fechainicio']),
+                    'fechafin': str(fechas['fechafin'])
+                })
+            planificación_QuerySet = Actividad.objects.all()\
+                .values('nombre',
+                        'secuencial_usuario__usuario',
+                        'secuencial_cobertura__nombre',
+                        'secuencial_requerido__nombre',
+                        'detalleplanificacionactividad__fechainicio',
+                        'detalleplanificacionactividad__fechafin',
+                        'detalleplanificacionactividad__secuencial_planificacion',  # noqa
+                        )\
+                .filter(Q(detalleplanificacionactividad__fechainicio__range=(str(fechas['fechainicio']),  # noqa
+                 str(fechas['fechafin']))) & Q(detalleplanificacionactividad__secuencial_planificacion=int(secuencialDetallePlanificaicon))).order_by('nombre').distinct('nombre')  # noqa
+            for planificacion in planificación_QuerySet:
+                planificacion_List.append({
+                    'nombre': str(planificacion['nombre']),
+                    'cobertura': str(planificacion['secuencial_cobertura__nombre']),  # noqa
+                    'responsable': str(planificacion['secuencial_usuario__usuario']),  # noqa
+                    'requerido': str(planificacion['secuencial_requerido__nombre']),  # noqa
+                    'fechainicio': str(planificacion['detalleplanificacionactividad__fechainicio']),  # noqa
+                    'fechafin': str(planificacion['detalleplanificacionactividad__fechafin'])  # noqa
+                })
+            print(planificacion_List)
+            notap = Notasplanificacion.objects.filter(
+                secuencial_planificacion=secuencialDetallePlanificaicon).count() # noqa
+            print('Notas planificacion', notap)
+            if notap == 1:
+                print("entra")
+                notaplanificar = Notasplanificacion.objects.all().values('nota').filter(
+                    secuencial_planificacion=secuencialDetallePlanificaicon)
+                datos_JSON['notaarea'] = list(notaplanificar)
+
+            datos_JSON['existenota'] = notap
+            datos_JSON['cronograma'] = planificacion_List
+            datos_JSON['fechas'] = fechas_List
+            datos_JSON['result'] = "OK"  # Establecer un mensaje en el caso de un correcto proceso # noqa
+            datos_JSON['message'] = "¡Proecso Actividad Extracción \
+                                guardado correctamente!"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+        except Exception as error:
+            print("Error al guardar-->transaccion" + str(error))
+            datos_JSON['message'] = "¡Ha ocurrido un error al procesar datos_JSON \
+                de la actividd!"
+            datos_JSON['result'] = "X"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+
+
+class CronogramaGuardar(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
+    group_required = 'jefesistemas'
+
+    @transaction.atomic
+    def get(self, request, *args, **kwargs):
+        _transaccion = transaction.savepoint()
+        try:
+            datos_JSON = {}
+            datos = json.loads(request.GET['cronograma'])
+            fechaactual = time.strftime("%Y-%m-%d")
+            idPlan = int(datos['idplanificacion'])
+            notasPlanificacion = Notasplanificacion(
+                nota=datos['notas'],
+                secuencial_planificacion=Planificacion.objects.get(pk=idPlan),
+                fechaproceso=fechaactual)
+            notasPlanificacion.save()
+            transaction.savepoint_commit(_transaccion)
+            datos_JSON['result'] = "OK"  # Establecer un mensaje en el caso de un correcto proceso # noqa
+            datos_JSON['message'] = "¡Proecso Nota guardado correctamente!"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+        except Exception as error:
+            print("Error al guardar-->transaccion" + str(error))
+            transaction.savepoint_rollback(_transaccion)
+            datos_JSON['message'] = "¡Ha ocurrido un error al procesar datos_JSON \
+                de la actividd!"
+            datos_JSON['result'] = "X"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+
+
+class ActividadLisView(LoginRequiredMixin, GroupRequiredMixin, ListView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
+    group_required = 'jefesistemas'
+    template_name = 'actividad/listar.html'
+    context_object_name = 'actividad_listar'
+    model = Actividad
+
+    def get_context_data(self, **kwargs):
+        ctx = super(ActividadLisView, self).get_context_data(**kwargs)
+        ctx['actividad_objeto'] = Actividad.objects.all().order_by('nombre')\
+            .values('secuencial',
+                    'nombre',
+                    'descripcion',
+                    'secuencial_usuario__usuario',
+                    'secuencial_cobertura__nombre',
+                    'secuencial_requerido__nombre',
+                    'detalleactividad__numerosemana',
+                    'detalleactividad__secuencial_tipoactividad')\
+            .distinct('nombre')\
+            .annotate(usuario=F('secuencial_usuario__usuario'),
+                      cobertura=F('secuencial_cobertura__nombre'),
+                      requerido=F('secuencial_requerido__nombre'), )
+        ctx['actividad_detalle_tipo'] = Actividad.objects.all()\
+            .values('nombre',
+                    'descripcion',
+                    'secuencial_usuario__usuario',
+                    'secuencial_cobertura__nombre',
+                    'secuencial_requerido__nombre',
+                    'detalleactividad__numerosemana',
+                    'detalleactividad__secuencial_tipoactividad')
+        ctx['duracion_list'] = Tipoactividad.objects.all()
+        ctx['detalleactividad_list'] = Detalleactividad.objects.all()
+        return ctx
+
+
+class ActividadFormulario(LoginRequiredMixin, GroupRequiredMixin, ListView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
+    group_required = 'jefesistemas'
+    template_name = "actividad/insertar.html"
+    context_object_name = "usuario_list"
+    model = Usuario
+
+    def get_context_data(self, **kwargs):
+        context = super(ActividadFormulario, self).get_context_data(**kwargs)
+        context['cobertura_list'] = Cobertura.objects.all()
+        context['requerido_list'] = Requerido.objects.all()
+        context['tipoactividad_list'] = Tipoactividad.objects.all()
+        return context
+
+# Permite generar la tabla de actiidad mediante una
+# consulta por el numero de semana correspondiente.
+
+
+class GuardarActividad(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
+    group_required = 'jefesistemas'
     @transaction.atomic
     def get(self, request, *args, **kwargs):
         _transaccion = transaction.savepoint()
@@ -454,7 +528,10 @@ class GuardarActividad(TemplateView):
 
 # Clase para guardar planificaciones dentro del sistema.
 
-class GuardarPlanificacion(TemplateView):
+class GuardarPlanificacion(LoginRequiredMixin, GroupRequiredMixin, TemplateView): # noqa
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
+    group_required = 'jefesistemas'
     # Llamar al metodo para transacciones en base de datos
     @transaction.atomic
     def post(self, request, *args, **kwargs):
@@ -463,25 +540,58 @@ class GuardarPlanificacion(TemplateView):
         _transaccion = transaction.savepoint()
         try:
             datosplanificacion = json.loads(request.POST['datosplaning'])
-            print(datosplanificacion)
             fechaactual = time.strftime("%Y-%m-%d")
-            print(fechaactual)
-            print('pasa')
             semanaactividad = int(datosplanificacion["semana"])
-            print('pasa')
+
             for planifica in datosplanificacion['planificacion']:
                 print('entra')
                 # print(planifica['actividad'])
-                actividad = planifica['actividad']
+                actividad_nombre = planifica['actividad']
                 fechainicio = planifica['fechainicio']
                 fechafin = planifica['fechafin']
-                detalleplanificacion = Detalleplanificacionactividad(
+
+                if(Actividad.objects.filter(nombre=actividad_nombre).exists()):
+                    print("El elemento existe")
+                    # print(Actividad.objects.get(nombre=actividad))
+                    detalleplanificacion = Detalleplanificacionactividad(
                     secuencial_actividad=Actividad.objects.get(
-                        nombre=actividad),
+                        nombre=actividad_nombre), # noqa
                     secuencial_planificacion=Planificacion.objects.get(
                         Q(fechainicio__lte=fechaactual) & Q(fechafin__gte=fechaactual) & Q(numerosemana=semanaactividad)), # noqa
                     fechainicio=fechainicio, fechafin=fechafin)
-                detalleplanificacion.save()
+                    detalleplanificacion.save()
+                else:
+                    print("El elemento no existe")
+                    usuario_GET = Usuario.objects.get(usuario=planifica["responsable"]) # noqa
+                    cobertura_GET = Cobertura.objects.get(nombre=planifica["cobertura"]) # noqa
+                    requerido_GET = Requerido.objects.get(nombre=planifica["requerido"]) # noqa
+                    recurrencia_GET = Tipoactividad.objects.get(secuencial=7)
+
+                    actividad = Actividad(
+                        nombre=actividad_nombre,
+                        descripcion="Programación de TI",
+                        secuencial_usuario=usuario_GET,
+                        secuencial_cobertura=cobertura_GET,
+                        secuencial_requerido=requerido_GET)
+                    actividad.save()
+
+                    print("la actividad unica se llama ", actividad_nombre)
+                    detalleactividad = Detalleactividad(
+                        numerosemana=semanaactividad,
+                        secuencial_actividad=Actividad.objects.get(
+                            nombre=actividad_nombre),
+                        secuencial_tipoactividad=recurrencia_GET,
+                        fechaproceso=fechaactual)
+                    detalleactividad.save()
+                    
+                    detalleplanificacion = Detalleplanificacionactividad(
+                        secuencial_actividad=Actividad.objects.get(
+                            nombre=actividad_nombre),
+                        secuencial_planificacion=Planificacion.objects.get(
+                            Q(fechainicio__lte=fechaactual) & Q(fechafin__gte=fechaactual) & Q(numerosemana=semanaactividad)), # noqa
+                        fechainicio=fechainicio, fechafin=fechafin)
+                    detalleplanificacion.save()
+                    
             transaction.savepoint_commit(_transaccion)
             datosplanificacion['result'] = "OK"
             datosplanificacion['message'] = "¡Registro de actividad \
@@ -501,6 +611,32 @@ class GuardarPlanificacion(TemplateView):
             return HttpResponse(
                 json.dumps(datosplanificacion), content_type="application/json") # noqa
 
+
+class ObtenerActividad(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
+    group_required = 'jefesistemas'
+    # Metodo para obtener las actividades
+    def get(self, request, *args, **kwargs): # noqa
+        datos_JSON = {}
+        try:
+            secTipoActividad = json.loads(request.GET['tipoactividad'])
+            print("secttipocuenta", secTipoActividad)
+            actividad_QuerySet = Actividad.objects.all().values('secuencial', 'nombre', 'secuencial_usuario__usuario', 'secuencial_cobertura__nombre', 'secuencial_requerido__nombre').filter(detalleactividad__secuencial_tipoactividad=secTipoActividad).order_by('nombre').distinct('nombre') # noqa
+            print("el query set es", actividad_QuerySet)
+            datos_JSON['actividades'] = list(actividad_QuerySet)
+            datos_JSON['result'] = "OK" # Establecer un mensaje en el caso de un correcto proceso # noqa
+            datos_JSON['message'] = "¡Proecso Actividad Extracción \
+                            guardado correctamente!"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+        except Exception as error:
+            print("Error al guardar-->transaccion" + str(error))
+            datos_JSON['message'] = "¡Ha ocurrido un error al procesar datos_JSON \
+                de la actividd!"
+            datos_JSON['result'] = "X"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
 
 # Clase para solicitud get en donde debuelve un JSON de respuesta
 """

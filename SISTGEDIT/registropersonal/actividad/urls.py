@@ -1,7 +1,8 @@
 from django.urls import path
 
-from .views import (ActividadFormulario, ActividadLisView, CronogramaActividad, CronogramaGuardar,
-                    GenerarTabla, GuardarActividad, GuardarPlanificacion,
+from .views import (ActividadFormulario, ActividadLisView, CronogramaActividad,
+                    CronogramaGuardar, GenerarTabla, GuardarActividad,
+                    GuardarPlanificacion, ObtenerActividad,
                     PlanificacionActividad, PlanificacionActividadFormulario,
                     TipoactividadCreate, TipoactividadDelete,
                     TipoactividadListar, TipoactividadUpdate)
@@ -33,4 +34,6 @@ urlpatterns = [
          name='cronograma_generar'),
     path('cronograma/guardar/', CronogramaGuardar.as_view(),
          name='cronograma_guardar'),
+    path('planificacion/datosactividad/', ObtenerActividad.as_view(),
+         name='datos_actividad'),
 ]
