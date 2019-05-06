@@ -364,21 +364,21 @@ function obtenerActividadesSeleccionadas() {
     let actividadesAdicionales = { 'actividad': [], };
     $('#optgroup :selected').each(function () {
         if (typeof ($(this).text()) != "undefined") {
-            console.log(`Valor indefinido  ${$(this).val()} ${$(this).text()}`)
+            //console.log(`Valor indefinido  ${$(this).val()} ${$(this).text()}`)
             actividadesAdicionales.actividad.push({
                 "id": $(this).val(),
                 "valor": $(this).text(),
             })
         }
     });
-    console.log(actividadesAdicionales);
+    
     let nuevaFila = ""
     if (actividadesAdicionales['actividad'].length > 0) {
         for (let i in actividadesAdicionales['actividad']) {
             let actividadesSplit = (actividadesAdicionales['actividad'][i]['valor']).split("-");
+            console.log(!(buscarRepetidosTabla(actividadesSplit[0])))
+            if(!(buscarRepetidosTabla(actividadesSplit[0]))){
 
-            if(buscarRepetidosTabla(actividadesSplit[0])){
-                console.log(actividadesSplit)
                 nuevaFila = "<tr>";
                 nuevaFila += "<td style='" + "text-align:center" + "'> <input type=" + "'checkbox'" + " id=" + "'ch" + (parseInt(i) + contador) + "'" + "class=" + "'chk-col-teal checkbox'" + "/><label for=" + "'ch" + (parseInt(i) + contador) + "'" + "></label> </td>";
                 nuevaFila += "<td>" + actividadesSplit[0] + "</td>";
@@ -454,7 +454,7 @@ $("#actividadform").submit(function (event) {
     let cobertura_select = document.getElementById("cobertura_select");
     let requerido_select = document.getElementById("requerido_select");
     let nuevaFila = ""
-    if (buscarRepetidosTabla(nombre)) {
+    if (!(buscarRepetidosTabla(nombre))) {
         nuevaFila = "<tr>";
         nuevaFila += "<td style='" + "text-align:center" + "'> <input type=" + "'checkbox'" + " id=" + "'ch" + contador + "'" + "class=" + "'chk-col-teal checkbox'" + "/><label for=" + "'ch" + contador + "'" + "></label> </td>";
         nuevaFila += "<td>" + nombre + "</td>";
@@ -480,21 +480,28 @@ $("#actividadform").submit(function (event) {
 });
 
 function buscarRepetidosTabla(nombre) {
+    let retorno = false
     $("#mainTable tbody tr").each(function (index) {
         let actividad
+        
         $(this).children("td").each(function (index2) { // Recorre cada fila y a su vez cada columna
             // Obtiene el indice de la columna en la que esta para archivar el valor en una variable
             switch (index2) {
                 case 1:
                     actividad = $(this).text();
+                    
                     if (actividad == nombre) {
-                        return true
+                        retorno = true
+                        console.log(actividad)
                     }
                     break;
             }
+            if(retorno) return true
         })
+        if(retorno) return true
     });
-    return false
+    if(retorno) return true
+    else return false
 }
 
 

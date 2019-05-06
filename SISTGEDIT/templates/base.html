@@ -350,11 +350,21 @@
                                 </a>
                             </li>
                             <li>
-                                <a href="pages/typography.html">
+                                <a href="javascript:void(0);" class="menu-toggle">
                                     <i class="material-icons">person</i>
                                     <span>Usuarios</span>
                                 </a>
+                                <ul class="ml-menu">
+                                    <li>
+                                        <a href="{% url 'signup' %}">
+                                            <i class="material-icons">event_note</i>
+                                            <span>Registro Usuarios</span>
+                                        </a>
+                                    </li>
+                                    
+                                </ul>
                             </li>
+
                             
                             <li>
                                 <a href="{% url 'requerido_listar' %}">

@@ -639,6 +639,8 @@ class ObtenerActividad(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
                 json.dumps(datos_JSON), content_type="application/json")
 
 # Clase para solicitud get en donde debuelve un JSON de respuesta
+
+
 """
 class NombredelMetodo(TemplateView):
     def get(self, request, *args, **kwargs):
@@ -657,3 +659,23 @@ class NombredelMetodo(TemplateView):
             return HttpResponse(
                 json.dumps(datos_JSON), content_type="application/json")
 """
+
+
+""" 
+-********************EJECUCIÓN DE ACTIVIDADES ****************************
+"""
+
+
+class EjecutarActividad(LoginRequiredMixin, GroupRequiredMixin, ListView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
+    group_required = 'jefesistemas'
+    template_name = 'actividad/ejecutar.html'
+    context_object_name = 'planificacion_listar'
+    model = Detalleplanificacionactividad
+
+    def get_context_data(self, **kwargs):
+        ctx = super(EjecutarActividad, self).get_context_data(**kwargs)
+        ctx['actividad_list'] = Actividad.objects.all()
+        return ctx
+
