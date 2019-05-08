@@ -31,18 +31,37 @@
                 <div class="header">
                     <h2>
                         ACTIVIDADES
-                        <small>Lista de actividades a ejecutar</small>
+                        <small>Lista de actividades a ejecutar -- user {{ user.username }}</small>
+                        <p id="usuario">{{ user.username }}</p>
                     </h2>
-                    
+
                 </div>
                 <div class="body">
-                    <div onload="tablaactividades()">
-                        
+                    <div class="row clearfix">
+                        <div class="col-sm-12">
+                            <div class="table-responsive" onload="listaractividad()">
+                                <table id="mainTable" class="table tablaactividad">
+                                    <thead class="thead-dark">
+                                        <tr>
+                                            <th>#</th>
+                                            <th>ACTIVIDAD</th>
+                                            <th>ACCIÓN</th> 
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <!-- Recorrido de lista de coberturas para presentar en una tabla -->
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
 </div>
@@ -60,14 +79,13 @@
 <script src="{% static 'plugins/dropzone/dropzone.js' %}"></script>
 <script src="{% static 'plugins/jquery-inputmask/jquery.inputmask.bundle.js' %}"></script>
 <script src="{% static 'plugins/multi-select/js/jquery.multi-select.js' %}"></script>
-<script src="{% static 'plugins/jquery-spinner/js/jquery.spinner.js' %}"></script>
+
 <script src="{% static 'plugins/bootstrap-tagsinput/bootstrap-tagsinput.js' %}"></script>
 <script src="{% static 'plugins/nouislider/nouislider.js' %}"></script>
 <script src="{% static 'plugins/node-waves/waves.js' %}"></script>
 <script src="{% static 'plugins/sweetalert/sweetalert.min.js' %}"></script>
 <script src="{% static 'js/admin.js' %}"></script>
-<script src="{% static 'js/system/perfil.js' %}"></script>
-<script src="{% static 'js/system/usuarios.js' %}"></script>
+<script src="{% static 'js/system/actividadejecutar.js' %}"></script>
 <script src="{% static 'js/pages/forms/advanced-form-elements.js' %}"></script>
 <script src="{% static 'js/demo.js' %}"></script>
 {% endblock js %}

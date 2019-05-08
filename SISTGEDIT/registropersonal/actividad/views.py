@@ -679,3 +679,21 @@ class EjecutarActividad(LoginRequiredMixin, GroupRequiredMixin, ListView):
         ctx['actividad_list'] = Actividad.objects.all()
         return ctx
 
+    def post(self, request, *args, **kwargs):
+        
+        datos_JSON = {}
+        try:
+            usuario = json.loads(request.POST['usuario'])
+            print("el usuario es: ", usuario)
+            datos_JSON['result'] = "OK" # Establecer un mensaje en el caso de un correcto proceso # noqa
+            datos_JSON['message'] = "¡Proecso Actividad Extracción \
+                            guardado correctamente!"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+        except Exception as error:
+            print("Error al guardar-->transaccion" + str(error))
+            datos_JSON['message'] = "¡Ha ocurrido un error al procesar datos_JSON \
+                de la actividd!"
+            datos_JSON['result'] = "X"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
