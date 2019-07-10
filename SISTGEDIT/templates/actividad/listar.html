@@ -93,8 +93,8 @@
                                                 <tr>
                                                     <td id="cobarturafila_sec{{actividad.secuencial}}">{{ forloop.counter }}</td>
                                                     <td>{{actividad.nombre}}</td>
-                                                    <td>{{actividad.secuencial_usuario__usuario}}</td>
                                                     <td>{{actividad.secuencial_cobertura__nombre}}</td>
+                                                    <td>{{actividad.user_id__first_name}} {{actividad.user_id__last_name}} </td>
                                                     <td>{{actividad.secuencial_requerido__nombre}}</td>
                                                     
                                                     {% if actividad.detalleactividad__numerosemana == 1 %}
@@ -181,8 +181,8 @@
                                         <tr>
                                             <td id="cobarturafila_sec{{actividad.secuencial}}">{{ forloop.counter }}</td>
                                             <td>{{actividad.nombre}}</td>
-                                            <td>{{actividad.secuencial_usuario__usuario}}</td>
                                             <td>{{actividad.secuencial_cobertura__nombre}}</td>
+                                            <td>{{actividad.user_id__first_name}} {{actividad.user_id__last_name}} </td>
                                             <td>{{actividad.secuencial_requerido__nombre}}</td>                 
                                             {% for detalleactividad in detalleactividad_list %}                     
                                                 {% if detalleactividad.secuencial_actividad_id == actividad.secuencial %}
@@ -208,6 +208,7 @@
                                     <th>SEM</th>
                                     <th>SEM</th>
                                     <th>SEM</th>
+                                    <th>SEM</th>
                                     
                                 </tr>
                             </thead>
@@ -221,6 +222,7 @@
                                     <th>SEM</th>
                                     <th>SEM</th>
                                     <th>SEM</th>
+                                     <th>SEM</th>
                                                     
                                 </tr>
                             </tfoot>
@@ -231,8 +233,8 @@
                                         <tr>
                                             <td id="cobarturafila_sec{{actividad.secuencial}}">{{ forloop.counter }}</td>
                                             <td>{{actividad.nombre}}</td>
-                                            <td>{{actividad.secuencial_usuario__usuario}}</td>
                                             <td>{{actividad.secuencial_cobertura__nombre}}</td>
+                                            <td>{{actividad.user_id__first_name}} {{actividad.user_id__last_name}} </td>
                                             <td>{{actividad.secuencial_requerido__nombre}}</td>                 
                                             {% for detalleactividad in detalleactividad_list %}                     
                                                 {% if detalleactividad.secuencial_actividad_id == actividad.secuencial %}
@@ -279,8 +281,8 @@
                                         <tr>
                                             <td id="cobarturafila_sec{{actividad.secuencial}}">{{ forloop.counter }}</td>
                                             <td>{{actividad.nombre}}</td>
-                                            <td>{{actividad.secuencial_usuario__usuario}}</td>
                                             <td>{{actividad.secuencial_cobertura__nombre}}</td>
+                                            <td>{{actividad.user_id__first_name}} {{actividad.user_id__last_name}} </td>
                                             <td>{{actividad.secuencial_requerido__nombre}}</td>                 
                                             {% for detalleactividad in detalleactividad_list %}                     
                                                 {% if detalleactividad.secuencial_actividad_id == actividad.secuencial %}
@@ -304,6 +306,7 @@
                                     <th>RESPONSABLE</th>
                                     <th>REQUERIDO</th>
                                     <th>SEM</th>
+                                    <th>SEM</th>
                                 </tr>
                             </thead>
                             <tfoot>
@@ -313,7 +316,8 @@
                                     <th>COBERTURA</th>
                                     <th>RESPONSABLE</th>
                                     <th>REQUERIDO</th>
-                                    <th>SEM</th>                    
+                                    <th>SEM</th> 
+                                    <th>SEM</th>                   
                                 </tr>
                             </tfoot>
                             <tbody>                      
@@ -323,8 +327,8 @@
                                         <tr>
                                             <td id="cobarturafila_sec{{actividad.secuencial}}">{{ forloop.counter }}</td>
                                             <td>{{actividad.nombre}}</td>
-                                            <td>{{actividad.secuencial_usuario__usuario}}</td>
                                             <td>{{actividad.secuencial_cobertura__nombre}}</td>
+                                            <td>{{actividad.user_id__first_name}} {{actividad.user_id__last_name}} </td>
                                             <td>{{actividad.secuencial_requerido__nombre}}</td>                 
                                             {% for detalleactividad in detalleactividad_list %}                     
                                                 {% if detalleactividad.secuencial_actividad_id == actividad.secuencial %}
@@ -367,8 +371,8 @@
                                         <tr>
                                             <td id="cobarturafila_sec{{actividad.secuencial}}">{{ forloop.counter }}</td>
                                             <td>{{actividad.nombre}}</td>
-                                            <td>{{actividad.secuencial_usuario__usuario}}</td>
                                             <td>{{actividad.secuencial_cobertura__nombre}}</td>
+                                            <td>{{actividad.user_id__first_name}} {{actividad.user_id__last_name}} </td>
                                             <td>{{actividad.secuencial_requerido__nombre}}</td>                 
                                             {% for detalleactividad in detalleactividad_list %}                     
                                                 {% if detalleactividad.secuencial_actividad_id == actividad.secuencial %}

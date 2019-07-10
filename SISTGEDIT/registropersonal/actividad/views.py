@@ -18,12 +18,12 @@ from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic import (CreateView, DeleteView, ListView,
                                   TemplateView, UpdateView)
-
+from django.contrib.auth.models import User
 from registropersonal.sistema.models import (Actividad, Cobertura,
                                              Detalleactividad,
                                              Detalleplanificacionactividad,
                                              Notasplanificacion, Planificacion,
-                                             Requerido, Tipoactividad, Usuario)
+                                             Requerido, Tipoactividad)
 
 # @login_required(login_url='/accounts/login')
 # Creaciòn de una actividad basada en 3 entidades de relaciòn
@@ -108,7 +108,7 @@ class PlanificacionActividadFormulario(LoginRequiredMixin, GroupRequiredMixin, L
                     self).get_context_data(**kwargs)
         ctx['actividad_list'] = Actividad.objects.all()
         ctx['planificacion_list'] = Planificacion.objects.all()
-        ctx['usuario_list'] = Usuario.objects.all()
+        ctx['usuario_list'] = User.objects.all()
         ctx['cobertura_list'] = Cobertura.objects.all()
         ctx['requerido_list'] = Requerido.objects.all()
         ctx['tipoactividad_list'] = Tipoactividad.objects.all()
@@ -153,11 +153,13 @@ class GenerarTabla(LoginRequiredMixin, GroupRequiredMixin,  TemplateView):
                     'fechafin': str(fecha['fechafin'])
                 }
             # ORM para extraer las actividades recurrentes por periodos Bimensuales, Trimestrales, Cuatrimestrales, Semestrales y Anuales. # noqa
-            numeroActividad = Detalleactividad.objects.all().filter(Q(numerosemana=numerosemana) & ~Q(secuencial_tipoactividad=7)).values_list('secuencial_actividad', flat=True) # noqa
-            existePlanificacion = Detalleplanificacionactividad.objects.filter(secuencial_planificacion=Planificacion.objects.get(Q(fechainicio__lte=fechaactual) & Q(fechafin__gte=fechaactual) & Q(numerosemana=numerosemana))).count()
+            numeroActividad = Detalleactividad.objects.all().filter(Q(numerosemana=numerosemana) & ~Q(secuencial_tipoactividad=7)).values_list('secuencial_actividad', flat=True)  # noqa
+            existePlanificacion = Detalleplanificacionactividad.objects.filter(secuencial_planificacion=Planificacion.objects.get( # noqa
+                Q(fechainicio__lte=fechaactual) & Q(fechafin__gte=fechaactual) & Q(numerosemana=numerosemana))).count() # noqa
             semanaTipo = Actividad.objects.all()\
                 .values('nombre',
-                        'secuencial_usuario__usuario',
+                        'user_id__first_name',
+                        'user_id__last_name',
                         'secuencial_cobertura__nombre',
                         'secuencial_requerido__nombre',
                         ).filter(secuencial__in=list(numeroActividad))
@@ -165,7 +167,8 @@ class GenerarTabla(LoginRequiredMixin, GroupRequiredMixin,  TemplateView):
             # ORM para exraer las actividades Unicas por periodos mensuales
             semanaUnica = Actividad.objects.all()\
                 .values('nombre',
-                        'secuencial_usuario__usuario',
+                        'user_id__first_name',
+                        'user_id__last_name',
                         'secuencial_cobertura__nombre',
                         'secuencial_requerido__nombre',
                         'detalleactividad__numerosemana',
@@ -179,7 +182,8 @@ class GenerarTabla(LoginRequiredMixin, GroupRequiredMixin,  TemplateView):
                 # print("entra a if")
                 semana = Actividad.objects.all()\
                     .values('nombre',
-                            'secuencial_usuario__usuario',
+                            'user_id__first_name',
+                            'user_id__last_name',
                             'secuencial_cobertura__nombre',
                             'secuencial_requerido__nombre',
                             'detalleactividad__numerosemana',
@@ -190,7 +194,8 @@ class GenerarTabla(LoginRequiredMixin, GroupRequiredMixin,  TemplateView):
             elif numerosemanames == 2:
                 semana = Actividad.objects.all()\
                     .values('nombre',
-                            'secuencial_usuario__usuario',
+                            'user_id__first_name',
+                            'user_id__last_name',
                             'secuencial_cobertura__nombre',
                             'secuencial_requerido__nombre',
                             'detalleactividad__numerosemana',
@@ -201,7 +206,8 @@ class GenerarTabla(LoginRequiredMixin, GroupRequiredMixin,  TemplateView):
             elif numerosemanames == 3:
                 semana = Actividad.objects.all()\
                     .values('nombre',
-                            'secuencial_usuario__usuario',
+                            'user_id__first_name',
+                            'user_id__last_name',
                             'secuencial_cobertura__nombre',
                             'secuencial_requerido__nombre',
                             'detalleactividad__numerosemana',
@@ -212,7 +218,8 @@ class GenerarTabla(LoginRequiredMixin, GroupRequiredMixin,  TemplateView):
             elif numerosemanames == 4:
                 semana = Actividad.objects.all()\
                     .values('nombre',
-                            'secuencial_usuario__usuario',
+                            'user_id__first_name',
+                            'user_id__last_name',
                             'secuencial_cobertura__nombre',
                             'secuencial_requerido__nombre',
                             'detalleactividad__numerosemana',
@@ -223,7 +230,8 @@ class GenerarTabla(LoginRequiredMixin, GroupRequiredMixin,  TemplateView):
             elif numerosemanames == 5:
                 semana = Actividad.objects.all()\
                     .values('nombre',
-                            'secuencial_usuario__usuario',
+                            'user_id__first_name',
+                            'user_id__last_name',
                             'secuencial_cobertura__nombre',
                             'secuencial_requerido__nombre',
                             'detalleactividad__numerosemana',
@@ -288,7 +296,8 @@ class CronogramaActividad(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
                 })
             planificación_QuerySet = Actividad.objects.all()\
                 .values('nombre',
-                        'secuencial_usuario__usuario',
+                        'user_id__first_name',
+                        'user_id__last_name',
                         'secuencial_cobertura__nombre',
                         'secuencial_requerido__nombre',
                         'detalleplanificacionactividad__fechainicio',
@@ -301,7 +310,7 @@ class CronogramaActividad(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
                 planificacion_List.append({
                     'nombre': str(planificacion['nombre']),
                     'cobertura': str(planificacion['secuencial_cobertura__nombre']),  # noqa
-                    'responsable': str(planificacion['secuencial_usuario__usuario']),  # noqa
+                    'responsable': str(planificacion['user_id__first_name']) + " " +str(planificacion['user_id__last_name']),  # noqa
                     'requerido': str(planificacion['secuencial_requerido__nombre']),  # noqa
                     'fechainicio': str(planificacion['detalleplanificacionactividad__fechainicio']),  # noqa
                     'fechafin': str(planificacion['detalleplanificacionactividad__fechafin'])  # noqa
@@ -380,19 +389,20 @@ class ActividadLisView(LoginRequiredMixin, GroupRequiredMixin, ListView):
             .values('secuencial',
                     'nombre',
                     'descripcion',
-                    'secuencial_usuario__usuario',
+                    'user_id__first_name',
+                    'user_id__last_name',
                     'secuencial_cobertura__nombre',
                     'secuencial_requerido__nombre',
                     'detalleactividad__numerosemana',
                     'detalleactividad__secuencial_tipoactividad')\
             .distinct('nombre')\
-            .annotate(usuario=F('secuencial_usuario__usuario'),
-                      cobertura=F('secuencial_cobertura__nombre'),
+            .annotate(cobertura=F('secuencial_cobertura__nombre'),
                       requerido=F('secuencial_requerido__nombre'), )
         ctx['actividad_detalle_tipo'] = Actividad.objects.all()\
             .values('nombre',
                     'descripcion',
-                    'secuencial_usuario__usuario',
+                    'user_id__first_name',
+                    'user_id__last_name',
                     'secuencial_cobertura__nombre',
                     'secuencial_requerido__nombre',
                     'detalleactividad__numerosemana',
@@ -408,7 +418,7 @@ class ActividadFormulario(LoginRequiredMixin, GroupRequiredMixin, ListView):
     group_required = 'jefesistemas'
     template_name = "actividad/insertar.html"
     context_object_name = "usuario_list"
-    model = Usuario
+    model = User
 
     def get_context_data(self, **kwargs):
         context = super(ActividadFormulario, self).get_context_data(**kwargs)
@@ -457,8 +467,7 @@ class GuardarActividad(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
                     actividad = Actividad(
                         nombre=nombre,
                         descripcion=descripcion,
-                        secuencial_usuario=Usuario.objects.get(
-                            secuencial=usuario),
+                        user_id=(User.objects.get(id=usuario)).id,
                         secuencial_cobertura=Cobertura.objects.get(
                             secuencial=cobertura),
                         secuencial_requerido=Requerido.objects.get(
@@ -488,8 +497,7 @@ class GuardarActividad(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
                 # Creación del objeto actividad e introducción de valores
                 actividad = Actividad(
                     nombre=nombre, descripcion=descripcion,
-                    secuencial_usuario=Usuario.objects.get(
-                        secuencial=usuario),
+                    user_id=(User.objects.get(id=usuario)).id,
                     secuencial_cobertura=Cobertura.objects.get(
                         secuencial=cobertura),
                     secuencial_requerido=Requerido.objects.get(
@@ -561,8 +569,9 @@ class GuardarPlanificacion(LoginRequiredMixin, GroupRequiredMixin, TemplateView)
                     fechainicio=fechainicio, fechafin=fechafin)
                     detalleplanificacion.save()
                 else:
+                    responsablearray = planifica["responsable"].split()
                     print("El elemento no existe")
-                    usuario_GET = Usuario.objects.get(usuario=planifica["responsable"]) # noqa
+                    usuario_GET = User.objects.get(Q(first_name=responsablearray[0])and Q(last_name=responsablearray[1])) # noqa
                     cobertura_GET = Cobertura.objects.get(nombre=planifica["cobertura"]) # noqa
                     requerido_GET = Requerido.objects.get(nombre=planifica["requerido"]) # noqa
                     recurrencia_GET = Tipoactividad.objects.get(secuencial=7)
@@ -570,7 +579,7 @@ class GuardarPlanificacion(LoginRequiredMixin, GroupRequiredMixin, TemplateView)
                     actividad = Actividad(
                         nombre=actividad_nombre,
                         descripcion="Programación de TI",
-                        secuencial_usuario=usuario_GET,
+                        user_id=usuario_GET.id,
                         secuencial_cobertura=cobertura_GET,
                         secuencial_requerido=requerido_GET)
                     actividad.save()
@@ -622,7 +631,10 @@ class ObtenerActividad(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
         try:
             secTipoActividad = json.loads(request.GET['tipoactividad'])
             print("secttipocuenta", secTipoActividad)
-            actividad_QuerySet = Actividad.objects.all().values('secuencial', 'nombre', 'secuencial_usuario__usuario', 'secuencial_cobertura__nombre', 'secuencial_requerido__nombre').filter(detalleactividad__secuencial_tipoactividad=secTipoActividad).order_by('nombre').distinct('nombre') # noqa
+            actividad_QuerySet = Actividad.objects.all().values('secuencial', 'nombre',
+             'user_id__first_name',
+             'user_id__last_name',
+              'secuencial_cobertura__nombre', 'secuencial_requerido__nombre').filter(detalleactividad__secuencial_tipoactividad=secTipoActividad).order_by('nombre').distinct('nombre') # noqa
             print("el query set es", actividad_QuerySet)
             datos_JSON['actividades'] = list(actividad_QuerySet)
             datos_JSON['result'] = "OK" # Establecer un mensaje en el caso de un correcto proceso # noqa
@@ -682,9 +694,32 @@ class EjecutarActividad(LoginRequiredMixin, GroupRequiredMixin, ListView):
     def post(self, request, *args, **kwargs):
         
         datos_JSON = {}
+        planificacion_List = []
         try:
             usuario = json.loads(request.POST['usuario'])
             print("el usuario es: ", usuario)
+            actividad_QuerySet = Actividad.objects.values('detalleplanificacionactividad__secuencial', 'nombre',
+                                                                'user_id__first_name',
+                                                                'user_id__last_name',
+                                                                'detalleplanificacionactividad__estado',
+                                                                'detalleplanificacionactividad__fechainicio',
+                                                                'detalleplanificacionactividad__fechafin').exclude(detalleplanificacionactividad__estado=None)
+            #print(actividad_QuerySet)
+
+            for planificacion in actividad_QuerySet:
+                planificacion_List.append({
+                    'secuencial': str(planificacion['detalleplanificacionactividad__secuencial']),
+                    'usuario': str(planificacion['user_id__first_name'])+" " +str(planificacion['user_id__last_name']),
+                    'actividad': str(planificacion['nombre']),
+                    'estado': str(planificacion['detalleplanificacionactividad__estado']),
+                    'fechainicio': str(planificacion['detalleplanificacionactividad__fechainicio']),  # noqa
+                    'fechafin': str(planificacion['detalleplanificacionactividad__fechafin'])  # noqa
+                })
+            
+            for p in planificacion_List:
+                print(p)
+            
+            datos_JSON['actividades'] = planificacion_List
             datos_JSON['result'] = "OK" # Establecer un mensaje en el caso de un correcto proceso # noqa
             datos_JSON['message'] = "¡Proecso Actividad Extracción \
                             guardado correctamente!"

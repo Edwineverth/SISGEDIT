@@ -45,7 +45,11 @@
                                         <tr>
                                             <th>#</th>
                                             <th>ACTIVIDAD</th>
-                                            <th>ACCIÓN</th> 
+                                            <th>FECHA INICIO</th>
+                                            <th>FECHA FIN</th>
+                                            <th style="text-align: center;">ESTADO</th>
+                                            <th style="text-align: center;">ACCIÓN</th>
+                                            <th style="text-align: center;">INFORME</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -61,6 +65,79 @@
             </div>
         </div>
     </div>
+    <!-- For Material Design Colors -->
+    <div class="modal fade" id="smallModal" tabindex="-1" role="dialog">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="smallModalLabel">CAMBIO DE ESTADO ACTIVIDAD</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="demo-radio-button">
+
+                        <input name="group1" type="radio" id="radio_1" checked />
+                        <label for="radio_1">Iniciado</label>
+                        <input name="group1" type="radio" id="radio_2" />
+                        <label for="radio_2">Ejecutado</label>
+                        <input name="group1" type="radio" id="radio_3" />
+                        <label for="radio_3">Pendiente</label>
+
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-link waves-effect">Guardar</button>
+                    <button type="button" class="btn btn-link waves-effect" data-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <form role="form" id="formfield" action="inc/Controller/OperatorController.php" method="post"
+        enctype="multipart/form-data" onsubmit="return validateForm();">
+        <input type="hidden" name="action" value="add_form" />
+
+        <div class="form-group">
+            <label>Last Name</label><span class="label label-danger">*required</span>
+            <input class="form-control" placeholder="Enter Last Name" name="lastname" id="lastname">
+        </div>
+
+        <div class="form-group">
+            <label>First Name</label><span class="label label-danger">*required</span>
+            <input class="form-control" placeholder="Enter First Name" name="firstname" id="firstname">
+        </div>
+
+        <input type="button" name="btn" value="Submit" id="submitBtn" data-toggle="modal" data-target="#confirm-submit"
+            class="btn btn-default" />
+        <input type="button" name="btn" value="Reset" onclick="window.location='fillup.php'" class="btn btn-default"
+            data-modal-type="confirm" />
+    </form>
+    <div class="modal fade" id="confirm-submit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    Confirm Submit
+                </div>
+                <div class="modal-body">
+                    Are you sure you want to submit the following details?
+                    <table class="table">
+                        <tr>
+                            <th>Last Name</th>
+                            <td id="lname"></td>
+                        </tr>
+                        <tr>
+                            <th>First Name</th>
+                            <td id="fname"></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <a href="#" id="submit" class="btn btn-success success">Submit</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>
 
 
@@ -88,4 +165,5 @@
 <script src="{% static 'js/system/actividadejecutar.js' %}"></script>
 <script src="{% static 'js/pages/forms/advanced-form-elements.js' %}"></script>
 <script src="{% static 'js/demo.js' %}"></script>
+<script src="{% static 'js/pages/ui/modals.js' %}"></script>
 {% endblock js %}

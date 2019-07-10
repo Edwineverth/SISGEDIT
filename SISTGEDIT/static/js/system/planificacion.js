@@ -40,6 +40,7 @@ function generarTabla() {
             if (data['result'] == "OK") {
                 console.log('Proceso completado')
                 TablaJson(data) // Se ejecutará en el caso de que el proceso sea completado
+                console.log(data)
 
             } else {
                 console.log(data)
@@ -67,14 +68,14 @@ function TablaJson(data) {
         console.log("entra por json")
         //let contador = 0 // Creacion de contador para obtener el numero de filas
         let nuevaFila = ""; // Crear cadena de string que contendra el codigo HTML para ingresar los datos del ORM o actividad consultada 
-
+        //user_id__first_name - user_id__last_name
         console.log(data['fechasemana'])
         for (let i in data['semana']) {
             nuevaFila = "<tr>";
             nuevaFila += "<td style='" + "text-align:center" + "'> <input type=" + "'checkbox'" + " id=" + "'ch" + (parseInt(i) + contador) + "'" + "class=" + "'chk-col-teal checkbox'" + "/><label for=" + "'ch" + (parseInt(i) + contador) + "'" + "></label> </td>";
             nuevaFila += "<td>" + data['semana'][i]['nombre'] + "</td>";
             nuevaFila += "<td>" + data['semana'][i]['secuencial_cobertura__nombre'] + "</td>";
-            nuevaFila += "<td>" + data['semana'][i]['secuencial_usuario__usuario'] + "</td>";
+            nuevaFila += "<td>" + data['semana'][i]['user_id__first_name'] +" " +data['semana'][i]['user_id__last_name'] + "</td>";
             nuevaFila += "<td>" + data['semana'][i]['secuencial_requerido__nombre'] + "</td>";
             //Creación de los datapiker por cada una de las actividades
             nuevaFila += "<td >";
@@ -97,7 +98,7 @@ function TablaJson(data) {
                 nuevaFila += "<td style='" + "text-align:center" + "'> <input type=" + "'checkbox'" + " id=" + "'ch" + (parseInt(i) + contador) + "'" + "class=" + "'chk-col-teal checkbox'" + "/><label for=" + "'ch" + (parseInt(i) + contador) + "'" + "></label> </td>";
                 nuevaFila += "<td>" + data['semanatipo'][i]['nombre'] + "</td>";
                 nuevaFila += "<td>" + data['semanatipo'][i]['secuencial_cobertura__nombre'] + "</td>";
-                nuevaFila += "<td>" + data['semanatipo'][i]['secuencial_usuario__usuario'] + "</td>";
+                nuevaFila += "<td>" + data['semana'][i]['user_id__first_name'] +" "+ data['semana'][i]['user_id__last_name'] + "</td>";
                 nuevaFila += "<td>" + data['semanatipo'][i]['secuencial_requerido__nombre'] + "</td>";
                 //Creación de los datapiker por cada una de las actividades
                 nuevaFila += "<td >";
@@ -119,7 +120,7 @@ function TablaJson(data) {
                 nuevaFila += "<td style='" + "text-align:center" + "'> <input type=" + "'checkbox'" + " id=" + "'ch" + (parseInt(i) + contador) + "'" + "class=" + "'chk-col-teal checkbox'" + "/><label for=" + "'ch" + (parseInt(i) + contador) + "'" + "></label> </td>";
                 nuevaFila += "<td>" + data['semanaunica'][i]['nombre'] + "</td>";
                 nuevaFila += "<td>" + data['semanaunica'][i]['secuencial_cobertura__nombre'] + "</td>";
-                nuevaFila += "<td>" + data['semanaunica'][i]['secuencial_usuario__usuario'] + "</td>";
+                nuevaFila += "<td>" + data['semana'][i]['user_id__first_name'] +" "+ data['semana'][i]['user_id__last_name'] + "</td>";
                 nuevaFila += "<td>" + data['semanaunica'][i]['secuencial_requerido__nombre'] + "</td>";
                 //Creación de los datapiker por cada una de las actividades
                 nuevaFila += "<td >";
@@ -217,7 +218,7 @@ $("#tablaform").submit(function (event) {
 
         console.log(fecha2.diff(fecha1, 'days'), ' dias de diferencia');
 
-        //console.log(actividad + ' - ' + cobertura + ' - ' + responsable + ' - ' + requerido + ' - ' + fechainicio + ' - ' + fechafin);
+        console.log(actividad + ' - ' + cobertura + ' - ' + responsable + ' - ' + requerido + ' - ' + fechainicio + ' - ' + fechafin);
         // Añade cada uno de los datos obtenidos de la tabla dentro del arreglo de datos creando un JSON
         if (fecha2.diff(fecha1, 'days') >= 0) {
             console.log('Fila de fechas correctas')
@@ -350,12 +351,12 @@ function obtenerActividades() {
 
 function llenarSelectMultiple(data) {
     $('#optgroup').empty().multiSelect('refresh');
-
+    //user_id__first_name - user_id__last_name
     for (let index = 0; index < data['actividades'].length; index++) {
         $('#optgroup').multiSelect('addOption', {
             value: data['actividades'][index]['secuencial'],
-            text: data['actividades'][index]['nombre'] + "-" + data['actividades'][index]['secuencial_usuario__usuario'] + "-" + data['actividades'][index]['secuencial_cobertura__nombre'] + "-" + data['actividades'][index]['secuencial_requerido__nombre']
-        });
+            text: data['actividades'][index]['nombre'] + "-" + data['actividades'][index]['user_id__first_name'] + " " +  data['actividades'][index]['user_id__last_name'] + "-" +data['actividades'][index]['secuencial_cobertura__nombre'] + "-" + data['actividades'][index]['secuencial_requerido__nombre']
+        }); 
     }
 }
 
@@ -528,10 +529,8 @@ $('.deleteall').on("click", function (event) {
             var $this = $(this);
             if ($this.is(':checked')) {
                 sel = true;	//set to true if there is/are selected row
-                $this.parents('tr').fadeOut(function () {
-                    $this.remove(); //remove row when animation is finished
-                });
-                //b.prop('checked', false);
+                $this.closest('tr').remove();
+                
             }
         });
         if (!sel) alert('No data selected');

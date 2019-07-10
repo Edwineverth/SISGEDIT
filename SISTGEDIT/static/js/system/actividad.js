@@ -32,7 +32,7 @@ function guardarActividad() {
     let requerido = requerido_select.options[requerido_select.selectedIndex].id;
     let recurrencia = recurrencia_select.options[recurrencia_select.selectedIndex].id;
     let tabla = document.getElementById('mainTable');
-    
+    console.log(usuario)
     // Creación de dato JSON
     let actividad_data = {
         'actividad': [

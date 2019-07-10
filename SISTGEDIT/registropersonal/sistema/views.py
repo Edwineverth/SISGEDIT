@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
-from .models import Persona
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login, authenticate
 from registropersonal.sistema.forms import SignUpForm
+from django.contrib.auth.models import User
 
 
 @login_required(login_url='/accounts/login')
 def presentacion(request):
-    person_list = Persona.objects.all()
+    person_list = User.objects.all()
     return render(request, 'sistema/index.html', {'person_list': person_list})
 
 
@@ -30,7 +31,7 @@ def signup(request):
             user.save()
             raw_password = form.cleaned_data.get('password1')
             user = authenticate(username=user.username, password=raw_password)
-            login(request, user)
+            #login(request, user)
             return redirect('home')
     else:
         form = SignUpForm()

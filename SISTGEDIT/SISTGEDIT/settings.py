@@ -37,7 +37,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'registropersonal.sistema',
-    'registropersonal.persona',
     'registropersonal.cobertura',
     'registropersonal.requerido',
     'registropersonal.feriado',
@@ -82,7 +81,7 @@ WSGI_APPLICATION = 'SISTGEDIT.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'SISGEDIT',
+        'NAME': 'SISGETI',
         'USER': 'postgres',
         'PASSWORD': 'root',
         'HOST': 'localhost',

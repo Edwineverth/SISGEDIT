@@ -22,9 +22,7 @@ class Actividad(models.Model):
     secuencial_cobertura = models.ForeignKey(
         'Cobertura', models.DO_NOTHING,
         db_column='secuencial_cobertura', default=1)
-    secuencial_usuario = models.ForeignKey(
-        'Usuario', models.DO_NOTHING,
-        db_column='secuencial_usuario', default=1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:  # noqa
         ordering = ["secuencial"]
@@ -151,7 +149,7 @@ class Listacontrol(models.Model):
     def __str__(self):
         return 'Feriados: ' + self.nombre
 
-
+"""
 class Persona(models.Model):
     secuencial = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, blank=True, null=True)
@@ -164,7 +162,7 @@ class Persona(models.Model):
 
     def __str__(self):
         return 'Persona: ' + self.nombre
-
+"""
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -264,8 +262,7 @@ class Tipoturno(models.Model):
 
 class Turno(models.Model):
     secuencial = models.AutoField(primary_key=True)
-    secuencial_usuario = models.ForeignKey(
-        'Usuario', models.DO_NOTHING, db_column='secuencial_usuario')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     secuencial_tipoturno = models.ForeignKey(
         Tipoturno, models.DO_NOTHING, db_column='secuencial_tipoturno')
     secuencial_horario = models.ForeignKey(
@@ -284,7 +281,7 @@ class Turnoferiado(models.Model):
     secuencial_feriado = models.ForeignKey(
         Feriados, models.DO_NOTHING, db_column='secuencial_feriado')
 
-
+"""
 class Usuario(models.Model):
     secuencial = models.AutoField(primary_key=True)
     usuario = models.CharField(max_length=50, blank=True, null=True)
@@ -299,3 +296,4 @@ class Usuario(models.Model):
 
     def __str__(self):
         return 'Usuario: ' + self.usuario
+"""
