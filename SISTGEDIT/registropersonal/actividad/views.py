@@ -1,5 +1,5 @@
 # from django.shortcuts import render
-import datetime
+# import datetime
 import json
 import time
 
@@ -79,7 +79,7 @@ class TipoactividadDelete(LoginRequiredMixin, DeleteView):
     template_name = 'actividad/tipoactividad/eliminar.html'
     success_url = reverse_lazy('tipoactividad_listar')
 
-    @method_decorator(permission_required('sistema.delete_tipoactividad', reverse_lazy('home'))) # noqa
+    @method_decorator(permission_required('sistema.delete_tipoactividad', reverse_lazy('home')))# noqa
     def dispatch(self, *args, **kwargs):
         return super(TipoactividadDelete, self).dispatch(*args, **kwargs)
 
@@ -570,8 +570,13 @@ class GuardarPlanificacion(LoginRequiredMixin, GroupRequiredMixin, TemplateView)
                     detalleplanificacion.save()
                 else:
                     responsablearray = planifica["responsable"].split()
+                    if(len(responsablearray) == 2):
+                        usuario_GET = User.objects.get(Q(first_name=responsablearray[0])and Q(last_name=responsablearray[1]))
+                    else:
+                        usuario_GET = User.objects.get(Q(first_name=responsablearray[0]+" "+responsablearray[1])and Q(last_name=responsablearray[2]+" "+responsablearray[3])) # noqa
+                    print(responsablearray)
                     print("El elemento no existe")
-                    usuario_GET = User.objects.get(Q(first_name=responsablearray[0])and Q(last_name=responsablearray[1])) # noqa
+                    #usuario_GET = User.objects.get(Q(first_name=responsablearray[0])and Q(last_name=responsablearray[1])) # noqa
                     cobertura_GET = Cobertura.objects.get(nombre=planifica["cobertura"]) # noqa
                     requerido_GET = Requerido.objects.get(nombre=planifica["requerido"]) # noqa
                     recurrencia_GET = Tipoactividad.objects.get(secuencial=7)
@@ -592,7 +597,6 @@ class GuardarPlanificacion(LoginRequiredMixin, GroupRequiredMixin, TemplateView)
                         secuencial_tipoactividad=recurrencia_GET,
                         fechaproceso=fechaactual)
                     detalleactividad.save()
-                    
                     detalleplanificacion = Detalleplanificacionactividad(
                         secuencial_actividad=Actividad.objects.get(
                             nombre=actividad_nombre),
@@ -600,7 +604,6 @@ class GuardarPlanificacion(LoginRequiredMixin, GroupRequiredMixin, TemplateView)
                             Q(fechainicio__lte=fechaactual) & Q(fechafin__gte=fechaactual) & Q(numerosemana=semanaactividad)), # noqa
                         fechainicio=fechainicio, fechafin=fechafin)
                     detalleplanificacion.save()
-                    
             transaction.savepoint_commit(_transaccion)
             datosplanificacion['result'] = "OK"
             datosplanificacion['message'] = "¡Registro de actividad \
@@ -631,7 +634,7 @@ class ObtenerActividad(LoginRequiredMixin, GroupRequiredMixin, TemplateView):
         try:
             secTipoActividad = json.loads(request.GET['tipoactividad'])
             print("secttipocuenta", secTipoActividad)
-            actividad_QuerySet = Actividad.objects.all().values('secuencial', 'nombre',
+            actividad_QuerySet = Actividad.objects.all().values('secuencial', 'nombre',  # noqa
              'user_id__first_name',
              'user_id__last_name',
               'secuencial_cobertura__nombre', 'secuencial_requerido__nombre').filter(detalleactividad__secuencial_tipoactividad=secTipoActividad).order_by('nombre').distinct('nombre') # noqa
@@ -673,7 +676,7 @@ class NombredelMetodo(TemplateView):
 """
 
 
-""" 
+"""
 -********************EJECUCIÓN DE ACTIVIDADES ****************************
 """
 
@@ -692,34 +695,69 @@ class EjecutarActividad(LoginRequiredMixin, GroupRequiredMixin, ListView):
         return ctx
 
     def post(self, request, *args, **kwargs):
-        
         datos_JSON = {}
         planificacion_List = []
         try:
             usuario = json.loads(request.POST['usuario'])
             print("el usuario es: ", usuario)
-            actividad_QuerySet = Actividad.objects.values('detalleplanificacionactividad__secuencial', 'nombre',
-                                                                'user_id__first_name',
-                                                                'user_id__last_name',
-                                                                'detalleplanificacionactividad__estado',
-                                                                'detalleplanificacionactividad__fechainicio',
-                                                                'detalleplanificacionactividad__fechafin').exclude(detalleplanificacionactividad__estado=None)
-            #print(actividad_QuerySet)
+            actividad_QuerySet = Actividad.objects.values('detalleplanificacionactividad__secuencial', 'nombre',  # noqa
+                                                                'user_id__first_name',  # noqa
+                                                                'user_id__last_name',  # noqa
+                                                                'detalleplanificacionactividad__estado',  # noqa
+                                                                'detalleplanificacionactividad__fechainicio',  # noqa
+                                                                'detalleplanificacionactividad__fechafin').exclude(detalleplanificacionactividad__estado=None)  # noqa
+            # print(actividad_QuerySet)
 
             for planificacion in actividad_QuerySet:
                 planificacion_List.append({
-                    'secuencial': str(planificacion['detalleplanificacionactividad__secuencial']),
-                    'usuario': str(planificacion['user_id__first_name'])+" " +str(planificacion['user_id__last_name']),
+                    'secuencial': str(planificacion['detalleplanificacionactividad__secuencial']),  # noqa
+                    'usuario': str(planificacion['user_id__first_name'])+" " + str(planificacion['user_id__last_name']),  # noqa
                     'actividad': str(planificacion['nombre']),
-                    'estado': str(planificacion['detalleplanificacionactividad__estado']),
-                    'fechainicio': str(planificacion['detalleplanificacionactividad__fechainicio']),  # noqa
+                    'estado': str(planificacion['detalleplanificacionactividad__estado']),  # noqa
+                    'fechainicio': str(planificacion['detalleplanificacionactividad__fechainicio']),
                     'fechafin': str(planificacion['detalleplanificacionactividad__fechafin'])  # noqa
                 })
-            
+
             for p in planificacion_List:
                 print(p)
-            
+
             datos_JSON['actividades'] = planificacion_List
+            datos_JSON['result'] = "OK"  # Establecer un mensaje en el caso de un correcto proceso # noqa
+            datos_JSON['message'] = "¡Proecso Actividad Extracción \
+                            guardado correctamente!"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+        except Exception as error:
+            print("Error al guardar-->transaccion" + str(error))
+            datos_JSON['message'] = "¡Ha ocurrido un error al procesar datos_JSON \
+                de la actividd!"
+            datos_JSON['result'] = "X"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+
+
+class CambiarEstadoActividad(LoginRequiredMixin, GroupRequiredMixin, ListView):
+    login_url = '/accounts/login'
+    redirect_field_name = 'redirect_to'
+    group_required = 'jefesistemas'
+
+    def post(self, request, *args, **kwargs):
+        datos_JSON = {}
+        requestData = {}
+
+        try:
+            requestData = json.loads(request.POST['estado'])
+            actividadId = int(requestData["actividad"])
+            estadoActividad = requestData["estadoactividad"]
+            print(actividadId)
+            print(estadoActividad)
+            
+            detalleAct = Detalleplanificacionactividad.objects.get(secuencial=actividadId)
+            detalleAct.estado = estadoActividad
+            
+            print(detalleAct)
+            detalleAct.save()
+            
             datos_JSON['result'] = "OK" # Establecer un mensaje en el caso de un correcto proceso # noqa
             datos_JSON['message'] = "¡Proecso Actividad Extracción \
                             guardado correctamente!"
@@ -732,3 +770,27 @@ class EjecutarActividad(LoginRequiredMixin, GroupRequiredMixin, ListView):
             datos_JSON['result'] = "X"
             return HttpResponse(
                 json.dumps(datos_JSON), content_type="application/json")
+            
+    def get(self, request, **kwargs):
+        datos_JSON = {}
+        requestData = {}
+        
+        try:
+            requestData = json.loads(request.GET['actividad'])
+            print(requestData)
+            detalleAct = Detalleplanificacionactividad.objects.get(secuencial=requestData)
+            
+            
+            datos_JSON['result'] = "OK" # Establecer un mensaje en el caso de un correcto proceso # noqa
+            datos_JSON['message'] = "¡Proecso Actividad Extracción \
+                            guardado correctamente!"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+        except Exception as error:
+            print("Error al guardar-->transaccion" + str(error))
+            datos_JSON['message'] = "¡Ha ocurrido un error al procesar datos_JSON \
+                de la actividd!"
+            datos_JSON['result'] = "X"
+            return HttpResponse(
+                json.dumps(datos_JSON), content_type="application/json")
+            
