@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<!-- saved from url=(0077)https://django-braces.readthedocs.io/en/latest/access.html#loginrequiredmixin -->
+<html class=" js flexbox canvas canvastext webgl no-touch geolocation postmessage websqldatabase indexeddb hashchange history draganddrop websockets rgba hsla multiplebgs backgroundsize borderimage borderradius boxshadow textshadow opacity cssanimations csscolumns cssgradients cssreflections csstransforms csstransforms3d csstransitions fontface generatedcontent video audio localstorage sessionstorage webworkers applicationcache svg inlinesvg smil svgclippaths" lang="en" style=""><!--<![endif]--><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Access Mixins — django-braces 1.13.0 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  <link rel="stylesheet" href="./Access Mixins — django-braces 1.13.0 documentation_files/theme.css" type="text/css">
+  <link rel="stylesheet" href="./Access Mixins — django-braces 1.13.0 documentation_files/pygments.css" type="text/css">
+    <link rel="index" title="Index" href="https://django-braces.readthedocs.io/en/latest/genindex.html">
+    <link rel="search" title="Search" href="https://django-braces.readthedocs.io/en/latest/search.html">
+    <link rel="next" title="Form Mixins" href="https://django-braces.readthedocs.io/en/latest/form.html">
+    <link rel="prev" title="Welcome to django-braces’s documentation!" href="https://django-braces.readthedocs.io/en/latest/index.html"> 
+
+  
+  <script src="./Access Mixins — django-braces 1.13.0 documentation_files/modernizr.min.js.descarga"></script>
+
+
+<!-- RTD Extra Head -->
+
+<!-- 
+Always link to the latest version, as canonical.
+http://docs.readthedocs.org/en/latest/canonical.html
+-->
+<link rel="canonical" href="https://django-braces.readthedocs.io/en/latest/access.html">
+
+<link rel="stylesheet" href="./Access Mixins — django-braces 1.13.0 documentation_files/readthedocs-doc-embed.css" type="text/css">
+
+<script type="text/javascript" src="./Access Mixins — django-braces 1.13.0 documentation_files/readthedocs-data.js.descarga"></script>
+
+<!-- Add page-specific data, which must exist in the page js, not global -->
+<script type="text/javascript">
+READTHEDOCS_DATA['page'] = 'access'
+READTHEDOCS_DATA['source_suffix'] = '.rst'
+</script>
+
+<script type="text/javascript" src="./Access Mixins — django-braces 1.13.0 documentation_files/readthedocs-analytics.js.descarga"></script>
+
+<!-- end RTD <extrahead> -->
+</head>
+
+<body class="wy-body-for-nav" style="">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="https://django-braces.readthedocs.io/en/latest/index.html" class="icon icon-home"> django-braces
+          
+
+          
+          </a>
+
+          
+            
+            
+            
+              <div class="version">
+                latest
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="https://django-braces.readthedocs.io/en/latest/search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs">
+    <input type="hidden" name="check_keywords" value="yes">
+    <input type="hidden" name="area" value="default">
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#"><span class="toctree-expand"></span>Access Mixins</a><ul>
+<li class="toctree-l2 current"><a class="reference internal current" href="https://django-braces.readthedocs.io/en/latest/access.html#loginrequiredmixin">LoginRequiredMixin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#permissionrequiredmixin">PermissionRequiredMixin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#multiplepermissionsrequiredmixin">MultiplePermissionsRequiredMixin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#grouprequiredmixin"><span class="toctree-expand"></span>GroupRequiredMixin</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#standard-django-usage">Standard Django Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#multiple-groups-possible-usage">Multiple Groups Possible Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#custom-group-usage">Custom Group Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#dynamically-build-groups">Dynamically Build Groups</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#userpassestestmixin">UserPassesTestMixin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#superuserrequiredmixin">SuperuserRequiredMixin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#anonymousrequiredmixin"><span class="toctree-expand"></span>AnonymousRequiredMixin</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#static-examples">Static Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#dynamic-example">Dynamic Example</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#staffuserrequiredmixin">StaffuserRequiredMixin</a></li>
+<li class="toctree-l2"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#sslrequiredmixin"><span class="toctree-expand"></span>SSLRequiredMixin</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#id10">Standard Django Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#id11">Standard Django Usage</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#recentloginrequiredmixin">RecentLoginRequiredMixin</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/form.html">Form Mixins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/other.html">Other Mixins</a></li>
+</ul>
+
+            
+          
+        </div>
+      <div id="rtd-rjc139cz" class="ethical-rtd ethical-dark-theme"><div class="ethical-sidebar"><div class="ethical-content"><a href="https://readthedocs.org/sustainability/click/305/bEwJYNe1qWzr/" rel="nofollow" target="_blank" class="ethical-image-link"><img src="./Access Mixins — django-braces 1.13.0 documentation_files/readthedocs-logo-fs8.png"></a><div class="ethical-text"><a href="https://readthedocs.org/sustainability/click/305/bEwJYNe1qWzr/" rel="nofollow" target="_blank">Private repos and priority support<br>Try Read the Docs for Business Today!</a></div></div><div class="ethical-callout"><small><em><a href="https://readthedocs.org/sustainability/advertising/">Sponsored</a><span> · </span><a href="https://docs.readthedocs.io/en/latest/ethical-advertising.html">Ads served ethically</a></em></small></div></div><img src="./Access Mixins — django-braces 1.13.0 documentation_files/saved_resource" style="display: none;"></div></div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="https://django-braces.readthedocs.io/en/latest/index.html">django-braces</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="https://django-braces.readthedocs.io/en/latest/index.html">Docs</a> »</li>
+        
+      <li>Access Mixins</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            
+              <a href="https://github.com/brack3t/django-braces/blob/master/docs/access.rst" class="fa fa-github"> Edit on GitHub</a>
+            
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="access-mixins">
+<h1><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id13">Access Mixins</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#access-mixins" title="Permalink to this headline">¶</a></h1>
+<p>These mixins all control a user’s access to a given view. Since many of them extend the <code class="docutils literal notranslate"><span class="pre">AccessMixin</span></code>, the following are common attributes:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">login_url</span> <span class="o">=</span> <span class="n">settings</span><span class="o">.</span><span class="n">LOGIN_URL</span>
+<span class="n">raise_exception</span> <span class="o">=</span> <span class="kc">False</span>
+<span class="n">redirect_field_name</span> <span class="o">=</span> <span class="n">REDIRECT_FIELD_NAME</span>
+<span class="n">redirect_unauthenticated_users</span> <span class="o">=</span> <span class="kc">False</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">raise_exception</span></code> attribute allows for these scenarios, in case a
+permission is denied:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal notranslate"><span class="pre">False</span></code> (default): redirects to the provided login view.</li>
+<li><code class="docutils literal notranslate"><span class="pre">True</span></code>: raises a <code class="docutils literal notranslate"><span class="pre">PermissionDenied</span></code> exception.</li>
+<li>A subclass of <code class="docutils literal notranslate"><span class="pre">Exception</span></code>: raises this exception.</li>
+<li>A callable: gets called with the <code class="docutils literal notranslate"><span class="pre">request</span></code> argument.
+The function has to return a <code class="docutils literal notranslate"><span class="pre">HttpResponse</span></code> or
+<code class="docutils literal notranslate"><span class="pre">StreamingHttpResponse</span></code>, otherwise a <code class="docutils literal notranslate"><span class="pre">PermissionDenied</span></code>
+exception gets raised.</li>
+</ul>
+</div></blockquote>
+<p>This gets done in <code class="docutils literal notranslate"><span class="pre">handle_no_permission</span></code>, which can be overridden itself.</p>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#access-mixins" id="id13">Access Mixins</a><ul>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#loginrequiredmixin" id="id14">LoginRequiredMixin</a></li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#permissionrequiredmixin" id="id15">PermissionRequiredMixin</a></li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#multiplepermissionsrequiredmixin" id="id16">MultiplePermissionsRequiredMixin</a></li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#grouprequiredmixin" id="id17">GroupRequiredMixin</a><ul>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#standard-django-usage" id="id18">Standard Django Usage</a></li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#multiple-groups-possible-usage" id="id19">Multiple Groups Possible Usage</a></li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#custom-group-usage" id="id20">Custom Group Usage</a></li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#dynamically-build-groups" id="id21">Dynamically Build Groups</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#userpassestestmixin" id="id22">UserPassesTestMixin</a></li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#superuserrequiredmixin" id="id23">SuperuserRequiredMixin</a></li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#anonymousrequiredmixin" id="id24">AnonymousRequiredMixin</a><ul>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#static-examples" id="id25">Static Examples</a></li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#dynamic-example" id="id26">Dynamic Example</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#staffuserrequiredmixin" id="id27">StaffuserRequiredMixin</a></li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#sslrequiredmixin" id="id28">SSLRequiredMixin</a><ul>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#id10" id="id29">Standard Django Usage</a></li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#id11" id="id30">Standard Django Usage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#recentloginrequiredmixin" id="id31">RecentLoginRequiredMixin</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="loginrequiredmixin">
+<span id="id1"></span><h2><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id14">LoginRequiredMixin</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#loginrequiredmixin" title="Permalink to this headline">¶</a></h2>
+<p>This mixin is rather simple and is generally the first inherited class in any view. If you don’t have an authenticated user, there’s no need to go any further. If you’ve used Django before you are probably familiar with the <code class="docutils literal notranslate"><span class="pre">login_required</span></code> decorator.  This mixin replicates the decorator’s functionality.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">As of version 1.0, the LoginRequiredMixin has been rewritten to behave like the rest of the <code class="docutils literal notranslate"><span class="pre">access</span></code> mixins. It now accepts <code class="docutils literal notranslate"><span class="pre">login_url</span></code>, <code class="docutils literal notranslate"><span class="pre">redirect_field_name</span></code>
+and <code class="docutils literal notranslate"><span class="pre">raise_exception</span></code>.</p>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This should be the left-most mixin of a view, except when combined with <a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/form.html#csrfexemptmixin"><span class="std std-ref">CsrfExemptMixin</span></a> - which in that case should be the left-most mixin.</p>
+</div>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="k">import</span> <span class="n">LoginRequiredMixin</span>
+
+
+<span class="k">class</span> <span class="nc">SomeSecretView</span><span class="p">(</span><span class="n">LoginRequiredMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s2">"path/to/template.html"</span>
+
+    <span class="c1">#optional</span>
+    <span class="n">login_url</span> <span class="o">=</span> <span class="s2">"/signup/"</span>
+    <span class="n">redirect_field_name</span> <span class="o">=</span> <span class="s2">"hollaback"</span>
+    <span class="n">raise_exception</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="k">def</span> <span class="nf">get</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">render_to_response</span><span class="p">({})</span>
+</pre></div>
+</div>
+<p>An optional class attribute of <code class="docutils literal notranslate"><span class="pre">redirect_unauthenticated_users</span></code> can be set to <code class="docutils literal notranslate"><span class="pre">True</span></code> if you are using another <code class="docutils literal notranslate"><span class="pre">access</span></code> mixin with <code class="docutils literal notranslate"><span class="pre">raise_exception</span></code> set to <code class="docutils literal notranslate"><span class="pre">True</span></code>. This will redirect to the login page if the user is not authenticated, but raises an exception if they are but do not have the required access defined by the other mixins. This defaults to <code class="docutils literal notranslate"><span class="pre">False</span></code>.</p>
+</div>
+<div class="section" id="permissionrequiredmixin">
+<span id="id2"></span><h2><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id15">PermissionRequiredMixin</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#permissionrequiredmixin" title="Permalink to this headline">¶</a></h2>
+<p>This mixin was originally written by <a class="reference external" href="https://github.com/danols">Daniel Sokolowski</a> (<a class="reference external" href="https://github.com/lukaszb/django-guardian/issues/48">code here</a>), but this version eliminates an unneeded render if the permissions check fails.</p>
+<p>Rather than overloading the dispatch method manually on every view that needs to check for the existence of a permission, use this mixin and set the <code class="docutils literal notranslate"><span class="pre">permission_required</span></code> class attribute on your view.
+If you don’t specify <code class="docutils literal notranslate"><span class="pre">permission_required</span></code> on your view, an <code class="docutils literal notranslate"><span class="pre">ImproperlyConfigured</span></code> exception is raised reminding you that you haven’t set it.
+If you need to enforce permissions against a given object, set the <code class="docutils literal notranslate"><span class="pre">object_level_permissions</span></code> attribute to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<p>The one limitation of this mixin is that it can <strong>only</strong> accept a single permission. If you need multiple permissions use <a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#multiplepermissionsrequiredmixin"><span class="std std-ref">MultiplePermissionsRequiredMixin</span></a>.</p>
+<p>In normal use of this mixin, <a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#loginrequiredmixin"><span class="std std-ref">LoginRequiredMixin</span></a> comes first, then the <code class="docutils literal notranslate"><span class="pre">PermissionRequiredMixin</span></code>. If the user isn’t an authenticated user, there is no point in checking for any permissions.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are using Django’s built in auth system, <code class="docutils literal notranslate"><span class="pre">superusers</span></code> automatically have all permissions in your system.</p>
+</div>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces</span> <span class="k">import</span> <span class="n">views</span>
+
+
+<span class="k">class</span> <span class="nc">SomeProtectedView</span><span class="p">(</span><span class="n">views</span><span class="o">.</span><span class="n">LoginRequiredMixin</span><span class="p">,</span>
+                        <span class="n">views</span><span class="o">.</span><span class="n">PermissionRequiredMixin</span><span class="p">,</span>
+                        <span class="n">TemplateView</span><span class="p">):</span>
+
+    <span class="n">permission_required</span> <span class="o">=</span> <span class="s2">"auth.change_user"</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s2">"path/to/template.html"</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">PermissionRequiredMixin</span></code> also offers a <code class="docutils literal notranslate"><span class="pre">check_permissions</span></code> method that should be overridden if you need custom permissions checking.</p>
+</div>
+<div class="section" id="multiplepermissionsrequiredmixin">
+<span id="id3"></span><h2><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id16">MultiplePermissionsRequiredMixin</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#multiplepermissionsrequiredmixin" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">MultiplePermissionsRequiredMixin</span></code> is a more powerful version of the <a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#permissionrequiredmixin"><span class="std std-ref">PermissionRequiredMixin</span></a>.  This view mixin can handle multiple permissions by setting the mandatory <code class="docutils literal notranslate"><span class="pre">permissions</span></code> attribute as a dict with the keys <code class="docutils literal notranslate"><span class="pre">any</span></code> and/or <code class="docutils literal notranslate"><span class="pre">all</span></code> to a list or tuple of permissions.  The <code class="docutils literal notranslate"><span class="pre">all</span></code> key requires the <code class="docutils literal notranslate"><span class="pre">request.user</span></code> to have <strong>all</strong> of the specified permissions. The <code class="docutils literal notranslate"><span class="pre">any</span></code> key requires the <code class="docutils literal notranslate"><span class="pre">request.user</span></code> to have <strong>at least one</strong> of the specified permissions. If you only need to check a single permission, the <a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#permissionrequiredmixin"><span class="std std-ref">PermissionRequiredMixin</span></a> is a better choice.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">If you are using Django’s built in auth system, <code class="docutils literal notranslate"><span class="pre">superusers</span></code> automatically have all permissions in your system.</p>
+</div>
+</div></blockquote>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces</span> <span class="k">import</span> <span class="n">views</span>
+
+
+<span class="k">class</span> <span class="nc">SomeProtectedView</span><span class="p">(</span><span class="n">views</span><span class="o">.</span><span class="n">LoginRequiredMixin</span><span class="p">,</span>
+                        <span class="n">views</span><span class="o">.</span><span class="n">MultiplePermissionsRequiredMixin</span><span class="p">,</span>
+                        <span class="n">TemplateView</span><span class="p">):</span>
+
+    <span class="c1">#required</span>
+    <span class="n">permissions</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">"all"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"blog.add_post"</span><span class="p">,</span> <span class="s2">"blog.change_post"</span><span class="p">),</span>
+        <span class="s2">"any"</span><span class="p">:</span> <span class="p">(</span><span class="s2">"blog.delete_post"</span><span class="p">,</span> <span class="s2">"user.change_user"</span><span class="p">)</span>
+    <span class="p">}</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">MultiplePermissionsRequiredMixin</span></code> also offers a <code class="docutils literal notranslate"><span class="pre">check_permissions</span></code> method that should be overridden if you need custom permissions checking.</p>
+</div>
+<div class="section" id="grouprequiredmixin">
+<span id="id4"></span><h2><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id17">GroupRequiredMixin</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#grouprequiredmixin" title="Permalink to this headline">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.2.</span></p>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">GroupRequiredMixin</span></code> ensures that the requesting user is in the group or groups specified. This view mixin can handle multiple groups by setting the mandatory <code class="docutils literal notranslate"><span class="pre">group_required</span></code> attribute as a list or tuple.</p>
+<blockquote>
+<div><div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">The mixin assumes you’re using Django’s default Group model and that your user model provides <code class="docutils literal notranslate"><span class="pre">groups</span></code> as a ManyToMany relationship.
+If this <strong>is not</strong> the case, you’ll need to override <code class="docutils literal notranslate"><span class="pre">check_membership</span></code> in the mixin to handle your custom set up.</p>
+</div>
+</div></blockquote>
+<div class="section" id="standard-django-usage">
+<h3><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id18">Standard Django Usage</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#standard-django-usage" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="k">import</span> <span class="n">GroupRequiredMixin</span>
+
+
+<span class="k">class</span> <span class="nc">SomeProtectedView</span><span class="p">(</span><span class="n">GroupRequiredMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+
+    <span class="c1">#required</span>
+    <span class="n">group_required</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">"editors"</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="multiple-groups-possible-usage">
+<h3><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id19">Multiple Groups Possible Usage</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#multiple-groups-possible-usage" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="k">import</span> <span class="n">GroupRequiredMixin</span>
+
+
+<span class="k">class</span> <span class="nc">SomeProtectedView</span><span class="p">(</span><span class="n">GroupRequiredMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+
+    <span class="c1">#required</span>
+    <span class="n">group_required</span> <span class="o">=</span> <span class="p">[</span><span class="sa">u</span><span class="s2">"editors"</span><span class="p">,</span> <span class="sa">u</span><span class="s2">"admins"</span><span class="p">]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="custom-group-usage">
+<h3><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id20">Custom Group Usage</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#custom-group-usage" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="k">import</span> <span class="n">GroupRequiredMixin</span>
+
+
+<span class="k">class</span> <span class="nc">SomeProtectedView</span><span class="p">(</span><span class="n">GroupRequiredMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+
+    <span class="c1">#required</span>
+    <span class="n">group_required</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">"editors"</span>
+
+    <span class="k">def</span> <span class="nf">check_membership</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="o">...</span>
+        <span class="c1"># Check some other system for group membership</span>
+        <span class="k">if</span> <span class="n">user_in_group</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dynamically-build-groups">
+<h3><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id21">Dynamically Build Groups</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#dynamically-build-groups" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="k">import</span> <span class="n">GroupRequiredMixin</span>
+
+
+<span class="k">class</span> <span class="nc">SomeProtectedView</span><span class="p">(</span><span class="n">GroupRequiredMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_group_required</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Get group or groups however you wish</span>
+        <span class="n">group</span> <span class="o">=</span> <span class="s1">'secret_group'</span>
+        <span class="k">return</span> <span class="n">group</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="userpassestestmixin">
+<span id="id5"></span><h2><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id22">UserPassesTestMixin</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#userpassestestmixin" title="Permalink to this headline">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.3.0.</span></p>
+</div>
+<p>Mixin that reimplements the <a class="reference external" href="https://docs.djangoproject.com/en/dev/topics/auth/default/#django.contrib.auth.decorators.user_passes_test">user_passes_test</a> decorator. This is helpful for much more complicated cases than checking if user <code class="docutils literal notranslate"><span class="pre">is_superuser</span></code> (for example if their email is from a specific domain).</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="k">import</span> <span class="n">UserPassesTestMixin</span>
+
+
+<span class="k">class</span> <span class="nc">SomeUserPassView</span><span class="p">(</span><span class="n">UserPassesTestMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">test_func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">is_staff</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">user</span><span class="o">.</span><span class="n">is_superuser</span>
+                <span class="ow">and</span> <span class="n">user</span><span class="o">.</span><span class="n">email</span><span class="o">.</span><span class="n">endswith</span><span class="p">(</span><span class="sa">u</span><span class="s2">"mydomain.com"</span><span class="p">))</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="superuserrequiredmixin">
+<span id="id6"></span><h2><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id23">SuperuserRequiredMixin</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#superuserrequiredmixin" title="Permalink to this headline">¶</a></h2>
+<p>Another permission-based mixin. This is specifically for requiring a user to be a superuser. Comes in handy for tools that only privileged users should have access to.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces</span> <span class="k">import</span> <span class="n">views</span>
+
+
+<span class="k">class</span> <span class="nc">SomeSuperuserView</span><span class="p">(</span><span class="n">views</span><span class="o">.</span><span class="n">LoginRequiredMixin</span><span class="p">,</span>
+                        <span class="n">views</span><span class="o">.</span><span class="n">SuperuserRequiredMixin</span><span class="p">,</span>
+                        <span class="n">TemplateView</span><span class="p">):</span>
+
+    <span class="n">template_name</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">"path/to/template.html"</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="anonymousrequiredmixin">
+<span id="id7"></span><h2><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id24">AnonymousRequiredMixin</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#anonymousrequiredmixin" title="Permalink to this headline">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.4.0.</span></p>
+</div>
+<p>Mixin that will redirect authenticated users to a different view. The default redirect is to
+Django’s <a class="reference external" href="https://docs.djangoproject.com/en/1.6/ref/settings/#login-redirect-url">settings.LOGIN_REDIRECT_URL</a>.</p>
+<div class="section" id="static-examples">
+<h3><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id25">Static Examples</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#static-examples" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="k">import</span> <span class="n">AnonymousRequiredMixin</span>
+
+
+<span class="k">class</span> <span class="nc">SomeView</span><span class="p">(</span><span class="n">AnonymousRequiredMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+    <span class="n">authenticated_redirect_url</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">"/send/away/"</span>
+</pre></div>
+</div>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.core.urlresolvers</span> <span class="k">import</span> <span class="n">reverse_lazy</span>
+<span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="k">import</span> <span class="n">AnonymousRequiredMixin</span>
+
+
+<span class="k">class</span> <span class="nc">SomeLazyView</span><span class="p">(</span><span class="n">AnonymousRequiredMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+    <span class="n">authenticated_redirect_url</span> <span class="o">=</span> <span class="n">reverse_lazy</span><span class="p">(</span><span class="sa">u</span><span class="s2">"view_url"</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="dynamic-example">
+<h3><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id26">Dynamic Example</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#dynamic-example" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="k">import</span> <span class="n">AnonymousRequiredMixin</span>
+
+
+<span class="k">class</span> <span class="nc">SomeView</span><span class="p">(</span><span class="n">AnonymousRequiredMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+    <span class="sd">""" Redirect based on user level """</span>
+    <span class="k">def</span> <span class="nf">get_authenticated_redirect_url</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">request</span><span class="o">.</span><span class="n">user</span><span class="o">.</span><span class="n">is_superuser</span><span class="p">:</span>
+            <span class="k">return</span> <span class="sa">u</span><span class="s2">"/admin/"</span>
+        <span class="k">return</span> <span class="sa">u</span><span class="s2">"/somewhere/else/"</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="staffuserrequiredmixin">
+<span id="id8"></span><h2><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id27">StaffuserRequiredMixin</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#staffuserrequiredmixin" title="Permalink to this headline">¶</a></h2>
+<p>Similar to <a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#superuserrequiredmixin"><span class="std std-ref">SuperuserRequiredMixin</span></a>, this mixin allows you to require a user with <code class="docutils literal notranslate"><span class="pre">is_staff</span></code> set to <code class="docutils literal notranslate"><span class="pre">True</span></code>.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces</span> <span class="k">import</span> <span class="n">views</span>
+
+
+<span class="k">class</span> <span class="nc">SomeStaffuserView</span><span class="p">(</span><span class="n">views</span><span class="o">.</span><span class="n">LoginRequiredMixin</span><span class="p">,</span>
+                        <span class="n">views</span><span class="o">.</span><span class="n">StaffuserRequiredMixin</span><span class="p">,</span>
+                        <span class="n">TemplateView</span><span class="p">):</span>
+
+    <span class="n">template_name</span> <span class="o">=</span> <span class="sa">u</span><span class="s2">"path/to/template.html"</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="sslrequiredmixin">
+<span id="id9"></span><h2><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id28">SSLRequiredMixin</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#sslrequiredmixin" title="Permalink to this headline">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.8.0.</span></p>
+</div>
+<p>Simple view mixin that requires the incoming request to be secure by checking
+Django’s <cite>request.is_secure()</cite> method. By default the mixin will return a
+permanent (301) redirect to the https verison of the current url. Optionally
+you can set <cite>raise_exception=True</cite> and a 404 will be raised.</p>
+<div class="section" id="id10">
+<h3><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id29">Standard Django Usage</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#id10" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="k">import</span> <span class="n">SSLRequiredMixin</span>
+
+
+<span class="k">class</span> <span class="nc">SomeSecureView</span><span class="p">(</span><span class="n">SSLRequiredMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+    <span class="sd">""" Redirects from http -&gt; https """</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s2">"path/to/template.html"</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="id11">
+<h3><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id30">Standard Django Usage</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#id11" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="k">import</span> <span class="n">SSLRequiredMixin</span>
+
+
+<span class="k">class</span> <span class="nc">SomeSecureView</span><span class="p">(</span><span class="n">SSLRequiredMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+    <span class="sd">""" http request would raise 404. https renders view """</span>
+    <span class="n">raise_exception</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s2">"path/to/template.html"</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="recentloginrequiredmixin">
+<span id="id12"></span><h2><a class="toc-backref" href="https://django-braces.readthedocs.io/en/latest/access.html#id31">RecentLoginRequiredMixin</a><a class="headerlink" href="https://django-braces.readthedocs.io/en/latest/access.html#recentloginrequiredmixin" title="Permalink to this headline">¶</a></h2>
+<div class="versionadded">
+<p><span class="versionmodified">New in version 1.8.0.</span></p>
+</div>
+<p>This mixin requires a user to have logged in within a certain number of seconds. This is to prevent stale sessions or to create a session time-out, as is often used for financial applications and the like. This mixin includes the functionality of <a class="reference internal" href="https://django-braces.readthedocs.io/en/latest/access.html#loginrequiredmixin">LoginRequiredMixin</a>, so you don’t need to use both on the same view.</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">django.views.generic</span> <span class="k">import</span> <span class="n">TemplateView</span>
+
+<span class="kn">from</span> <span class="nn">braces.views</span> <span class="k">import</span> <span class="n">RecentLoginRequiredMixin</span>
+
+
+<span class="k">class</span> <span class="nc">SomeSecretView</span><span class="p">(</span><span class="n">RecentLoginRequiredMixin</span><span class="p">,</span> <span class="n">TemplateView</span><span class="p">):</span>
+    <span class="n">max_last_login_delta</span> <span class="o">=</span> <span class="mi">600</span>  <span class="c1"># Require a login within the last 10 minutes</span>
+    <span class="n">template_name</span> <span class="o">=</span> <span class="s2">"path/to/template.html"</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="https://django-braces.readthedocs.io/en/latest/form.html" class="btn btn-neutral float-right" title="Form Mixins" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="https://django-braces.readthedocs.io/en/latest/index.html" class="btn btn-neutral" title="Welcome to django-braces’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr><div><div id="rtd-fbmgvoma" class="ethical-rtd"></div></div>
+
+  <div role="contentinfo">
+    <p>
+        © Copyright 2013, Kenneth Love and Chris Jones
+      
+        <span class="commit">
+          Revision <code>b81045f3</code>.
+        </span>
+      
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org/">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <div class="rst-versions shift" data-toggle="rst-versions" role="note" aria-label="versions">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      <span class="fa fa-book"> Read the Docs</span>
+      v: latest
+      <span class="fa fa-caret-down"></span>
+    </span>
+    <div class="rst-other-versions"><!-- Inserted RTD Footer -->
+<div class="injected">
+
+  
+
+      
+      
+      
+      <dl>
+        <dt>Versions</dt>
+        
+         <strong> 
+        <dd><a href="https://django-braces.readthedocs.io/en/latest/access.html">latest</a></dd>
+         </strong> 
+        
+        
+        <dd><a href="https://django-braces.readthedocs.io/en/stable/access.html">stable</a></dd>
+        
+        
+        
+        <dd><a href="https://django-braces.readthedocs.io/en/v1.4.0/access.html">v1.4.0</a></dd>
+        
+        
+        
+        <dd><a href="https://django-braces.readthedocs.io/en/v1.3.1/access.html">v1.3.1</a></dd>
+        
+        
+        
+        <dd><a href="https://django-braces.readthedocs.io/en/v1.3.0/access.html">v1.3.0</a></dd>
+        
+        
+        
+        <dd><a href="https://django-braces.readthedocs.io/en/v1.2.2/access.html">v1.2.2</a></dd>
+        
+        
+        
+        <dd><a href="https://django-braces.readthedocs.io/en/v1.2.1/access.html">v1.2.1</a></dd>
+        
+        
+        
+        <dd><a href="https://django-braces.readthedocs.io/en/v1.2.0/access.html">v1.2.0</a></dd>
+        
+        
+        
+        <dd><a href="https://django-braces.readthedocs.io/en/v1.1.0/access.html">v1.1.0</a></dd>
+        
+        
+        
+        <dd><a href="https://django-braces.readthedocs.io/en/v1.0.0/access.html">v1.0.0</a></dd>
+        
+        
+      </dl>
+      
+      
+
+      
+      
+      <dl>
+        <dt>Downloads</dt>
+        
+        <dd><a href="https://readthedocs.org/projects/django-braces/downloads/pdf/latest/">PDF</a></dd>
+        
+        <dd><a href="https://readthedocs.org/projects/django-braces/downloads/htmlzip/latest/">HTML</a></dd>
+        
+        <dd><a href="https://readthedocs.org/projects/django-braces/downloads/epub/latest/">Epub</a></dd>
+        
+      </dl>
+      
+      
+
+      
+      <dl>
+        <!-- These are kept as relative links for internal installs that are http -->
+        <dt>On Read the Docs</dt>
+        <dd>
+          <a href="https://readthedocs.org/projects/django-braces/">Project Home</a>
+        </dd>
+        <dd>
+          <a href="https://readthedocs.org/projects/django-braces/builds/">Builds</a>
+        </dd>
+        <dd>
+          <a href="https://readthedocs.org/projects/django-braces/downloads/">Downloads</a>
+        </dd>
+      </dl>
+      
+
+      
+
+      
+      <dl>
+        <dt>On GitHub</dt>
+        <dd>
+          <a href="https://github.com/brack3t/django-braces/blob/master/docs/access.rst">View</a>
+        </dd>
+        
+      </dl>
+      
+      
+
+      
+      <dl>
+        <dt>Search</dt>
+        <dd>
+          <div style="padding: 6px;">
+            <form id="flyout-search-form" class="wy-form" target="_blank" action="https://readthedocs.org/projects/django-braces/search/" method="get">
+              <input type="text" name="q" placeholder="Search docs">
+              </form>
+          </div>
+        </dd>
+      </dl>
+      
+
+
+
+      <hr>
+      
+        <small>
+          <span>Hosted by <a href="https://readthedocs.org/">Read the Docs</a></span>
+          <span> · </span>
+          <a href="https://docs.readthedocs.io/page/privacy-policy.html">Privacy Policy</a>
+        </small>
+      
+
+      
+
+</div>
+</div>
+  </div>
+
+
+
+  
+
+    
+    
+      <script type="text/javascript">
+          var DOCUMENTATION_OPTIONS = {
+              URL_ROOT:'./',
+              VERSION:'1.13.0',
+              LANGUAGE:'en',
+              COLLAPSE_INDEX:false,
+              FILE_SUFFIX:'.html',
+              HAS_SOURCE:  true,
+              SOURCELINK_SUFFIX: '.txt'
+          };
+      </script>
+        <script type="text/javascript" src="./Access Mixins — django-braces 1.13.0 documentation_files/jquery-2.0.3.min.js.descarga"></script>
+        <script type="text/javascript" src="./Access Mixins — django-braces 1.13.0 documentation_files/jquery-migrate-1.2.1.min.js.descarga"></script>
+        <script type="text/javascript" src="./Access Mixins — django-braces 1.13.0 documentation_files/underscore.js.descarga"></script>
+        <script type="text/javascript" src="./Access Mixins — django-braces 1.13.0 documentation_files/doctools.js.descarga"></script>
+        <script type="text/javascript" src="./Access Mixins — django-braces 1.13.0 documentation_files/readthedocs-doc-embed.js.descarga"></script>
+    
+
+  
+
+  <script type="text/javascript" src="./Access Mixins — django-braces 1.13.0 documentation_files/theme.js.descarga"></script>
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+
+</body></html>

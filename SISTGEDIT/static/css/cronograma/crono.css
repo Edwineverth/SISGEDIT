@@ -1,0 +1,49 @@
+.cronotabla {
+    font-size: 7pt;
+    text-align: center;
+    width: 60;
+    font-weight: bold;
+    color:#fff;
+    background-color: #343a40;
+    border-color: #454d55;
+}
+table.tablacrono {
+    /*width: 1200;*/
+    font-family:"helvetica";
+}
+
+.cronodiv {
+    display: none;
+    overflow: auto;
+}
+.headercrono {
+    font-size: 9pt;
+    text-align: center;
+    font-weight: bold;
+    color:#fff;
+    background-color: #343a40;
+    border-color: #454d55;
+}
+.bodycrono {
+    font-size: 9pt;
+}
+.bodycrono_act{
+    font-size: 9pt;
+    background-color: hsl(210, 15%, 54%);
+}
+
+.id_css{
+    width: 10;
+}
+.actividad_css{
+    width: 280;
+}
+.cobertura_css{
+    width: 100;
+}
+.responsable_css{
+    width: 100;
+}
+.requerido_css{
+    width: 100;
+}

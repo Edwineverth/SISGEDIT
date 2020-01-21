@@ -1,3 +1,4 @@
+"""
 # from django.shortcuts import render
 import json
 from datetime import datetime
@@ -131,3 +132,4 @@ class GuardarActividad(TemplateView):
             datos['result'] = "X"
             return HttpResponse(
                 json.dumps(datos), content_type="application/json")
+"""

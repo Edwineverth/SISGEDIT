@@ -1,0 +1,61 @@
+Cannot resolve keyword ' secuencial_usuario' into field. Choices are: 
+descripcion, 
+detalleactividad, 
+detalleplanificacionactividad, 
+nombre, 
+secuencial, 
+secuencial_cobertura, 
+secuencial_cobertura_id, 
+secuencial_requerido, 
+secuencial_requerido_id, 
+secuencial_usuario, 
+secuencial_usuario_id
+
+{'nombre': 'Reportar Seguros de Vida; Crecer', 
+'descripcion': 'Proceso para reportar seguros de vida en el sistema', 
+'secuencial_usuario__usuario': 'jaguilar', 
+'secuencial_cobertura__nombre': 'Oficina Matriz', 
+'secuencial_requerido__nombre': 'Aseguradora', 
+'detalleactividad__numerosemana': 1, 
+'detalleactividad__secuencial_tipoactividad': 1}, 
+
+
+class Counter:
+    count = 0
+
+    def increment(self):
+        self.count += 1
+        return ''
+
+    def decrement(self):
+        self.count -= 1
+        return ''
+
+    def double(self):
+        self.count *= 2
+        return ''
+
+    def nombre(self):
+        return "Hola tags"
+
+
+def nombre():
+    return "Hola tags"
+
+
+register.tag('counter', Counter)
+register.tag('n', nombre)
+{% for s in semana %}
+                        {{s.numerosemana}}
+                    {% endfor %}
+                    {{s.numerosemana}}
+                    {{semana1}}
+                    {{semana2}}
+                    {{semana3}}
+                    {{semana4}}
+                    {{semana5}}
+
+
+
+
+<div class="input-daterange input-group" id="bs_datepicker_range_container"><div class="form-line"><input type="text" id="fechainicio_date" class="form-control" placeholder="Fecha Inicio..."></div><span class="input-group-addon">to</span><div class="form-line"><input type="text" id="fechafin_date" class="form-control" placeholder="Fecha Fin..."></div></div>

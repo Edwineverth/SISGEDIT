@@ -3,7 +3,7 @@
 function activarSemanas() {
     let valorSeleccion = document.getElementById("recurrencia_select").value;
     //document.getElementById("demo").innerHTML = "You selected: " + valorSeleccion;
-    if (valorSeleccion == "Mensuales") {
+    if (valorSeleccion == "Mensuales" | valorSeleccion == "Únicas") {
        console.log("Ingreso de una actividad mensual")
        $("#tablasemana").hide()
         $("#nsemana").show();
@@ -32,7 +32,7 @@ function guardarActividad() {
     let requerido = requerido_select.options[requerido_select.selectedIndex].id;
     let recurrencia = recurrencia_select.options[recurrencia_select.selectedIndex].id;
     let tabla = document.getElementById('mainTable');
-    
+    console.log(usuario)
     // Creación de dato JSON
     let actividad_data = {
         'actividad': [
@@ -52,7 +52,7 @@ function guardarActividad() {
     let valorSeleccion = document.getElementById("recurrencia_select").value;
     // Proceso para guardar actividades que tienen un periodo semanal y se realizan
     //cada mes
-    if (valorSeleccion == "Mensuales") {
+    if (valorSeleccion == "Mensuales" | valorSeleccion == "Únicas") {
         actividad_data.semana.push({'semana':numerosemana})
         actividad_data.proceso.push({'proceso':1})
         guardarAJAX(actividad_data) // Proceso de envio por GET metodo AJAX, de ser OK el proceso redirecciona
@@ -113,7 +113,7 @@ $(document).ready(function(){
         // Añadimos uno al total, ya que cuando cargamos los valores para la
         // columna, todavia no esta añadida
         //nuevaFila+="<td>"+(trs+1)+" filas";
-        //nuevaFila+="</tr>";
+        nuevaFila+="</tr>";
         $("#mainTable tbody").append(nuevaFila);
         $('#mainTable').editableTableWidget();
     });
@@ -133,4 +133,6 @@ $(document).ready(function(){
         }
     });
 });
+
+
 

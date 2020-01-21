@@ -1,6 +1,10 @@
 from django.urls import path
 
-from .views import (ActividadFormulario, ActividadLisView, GuardarActividad,
+from .views import (ActividadFormulario, ActividadLisView,
+                    CambiarEstadoActividad, CronogramaActividad,
+                    CronogramaGuardar, EjecutarActividad, GenerarTabla,
+                    GuardarActividad, GuardarPlanificacion, ObtenerActividad,
+                    PlanificacionActividad, PlanificacionActividadFormulario,
                     TipoactividadCreate, TipoactividadDelete,
                     TipoactividadListar, TipoactividadUpdate)
 
@@ -19,4 +23,22 @@ urlpatterns = [
          name='tipoactividad_editar'),
     path('tipoactividad/eliminar/<int:pk>/', TipoactividadDelete.as_view(),
          name='tipoactividad_eliminar'),
+    path('planificacion/listar/', PlanificacionActividad.as_view(),
+         name='planificacion_listar'),
+    path('planificacion/insertar/', PlanificacionActividadFormulario.as_view(),
+         name='planificacion_insertar'),
+    path('planificacion/datostabla/', GenerarTabla.as_view(),
+         name='planificacion_generartabla'),
+    path('planificacion/guardarplanificacion/', GuardarPlanificacion.as_view(),
+         name='planificacion_guardar'),
+    path('cronograma/generar/', CronogramaActividad.as_view(),
+         name='cronograma_generar'),
+    path('cronograma/guardar/', CronogramaGuardar.as_view(),
+         name='cronograma_guardar'),
+    path('planificacion/datosactividad/', ObtenerActividad.as_view(),
+         name='datos_actividad'),
+    path('ejecutar/', EjecutarActividad.as_view(),
+         name='ejecutar_actividad'),
+    path('cambioestado/', CambiarEstadoActividad.as_view(),
+         name='cambio_estado_actividad')
 ]

@@ -1,0 +1,268 @@
+{% extends 'base.html' %}
+
+{% load staticfiles %}
+
+{% block estilos %}
+<link href="{% static 'plugins/bootstrap/css/bootstrap.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/node-waves/waves.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/animate-css/animate.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/bootstrap-colorpicker/css/bootstrap-colorpicker.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/dropzone/dropzone.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/multi-select/css/multi-select.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/jquery-spinner/css/bootstrap-spinner.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/bootstrap-tagsinput/bootstrap-tagsinput.css' %}" rel="stylesheet">
+<link href="{% static 'plugins/bootstrap-select/css/bootstrap-select.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/nouislider/nouislider.min.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/bootstrap-material-datetimepicker/css/bootstrap-material-datetimepicker.css' %}"
+    rel="stylesheet" />
+<link href="{% static 'css/style.css' %}" rel="stylesheet">
+<link href="{% static 'css/themes/all-themes.css' %}" rel="stylesheet" />
+<link href="{% static 'plugins/sweetalert/sweetalert.css'%} " rel="stylesheet" />
+
+{% endblock estilos %}
+
+{% block content %}
+
+<div class="container-fluid">
+    <div class="block-header">
+        <h2>PLANIFICACIÓN DE ACTIVIDADES DEL SISTEMA</h2>
+    </div>
+    <div class="row clearfix">
+        <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+            <div class="card">
+                <div class="header">
+                    {% for s in semana %}
+                    <h2 class="font-bold col-orange">
+                        SEMANA N°<p id="semana" style="font-size: -webkit-xxx-large;">{{s.numerosemana}}</p>
+                        <small>Ingrese cada uno de los datos correctamente</small>
+                    </h2>
+                    {% endfor %}
+                </div>
+                <div class="body">
+
+                    <div id="reloj" style="font-size:20px;"></div>
+                    <h2 class="card-inside-title">DATOS</h2>
+                    <div class="row clearfix">
+                        <div class="col-md-6">
+                            <p>
+                                <b class="font-bold col-teal">SEMANA DEL MES:</b>
+                            </p>
+                            <select id="semana_select" class="form-control show-tick" data-live-search="true">
+                                <option id="1">SEMANA MES 1</option>
+                                <option id="2">SEMANA MES 2</option>
+                                <option id="3">SEMANA MES 3</option>
+                                <option id="4">SEMANA MES 4</option>
+                                <option id="5">SEMANA MES 5</option>
+
+                            </select>
+                        </div>
+                        <div class="icon-and-text-button-demo   col-lg-6 col-sm-6">
+                            <button type="button" class="btn btn-primary waves-effect" style="width: 50%"
+                                onclick="generarTabla()">
+                                <i class="material-icons">list</i>
+                                <span>GENERAR TABLA</span>
+                            </button>
+                            <button type="button" class="btn bg-teal waves-effect" style="width: 50%"
+                                onclick="window.location='{% url 'actividad_insertar' %}';">
+                                <i class="material-icons">assignment</i>
+                                <span>INSERTAR ACTIVIDAD</span>
+                            </button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="row clearfix">
+                        <div class="col-md-12" id="actividadAdicional" style="display: none">
+                            <div class="header">
+                                <h2 class="font-bold col-orange"> Actividades Adicionales <br>
+                                        <input type="checkbox" id="actividad_Check" class="chk-col-teal" onchange="actividadCheck()" />
+                                        
+                                        <label for="actividad_Check"><small>Actividades adicionales que desee ingresar o que aun no han sido terminadas</small></label>
+                                </h2>
+                               
+                                    <input type="checkbox" checked="checked" />
+                                    
+                                
+                            </div>
+                        </div>
+                        <div id="seleccionarActividad" class="col-md-3" style="display: none">
+                            <div>
+                                <p>
+                                    <b>ACTIVIDAD</b>
+                                </p>
+                                <select id="actividad_select" class="form-control show-tick" data-live-search="true" onchange="tipoactividad()">
+                                    <option id="1">Unicas</option>
+                                    <option id="2">Recurrentes</option>
+                                </select>
+                            
+                            </div>
+                            
+                        </div>
+                        
+                    </div>
+                    
+                    <div id="actividadunica"  class="well" style="display: none">
+                        <form action="/actividad/planificacion/guardaract/" method="post" id="actividadform">
+                            <div class="row clearfix" > 
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <input type="text" id="nombre_Text" class="form-control" placeholder="Nombre de la actividad" required />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <div class="form-line">
+                                            <textarea rows="4" id="descripcion_text" class="form-control no-resize"
+                                                placeholder="Ingrese la descripción de la actividad" required></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>
+                                        <b>Usuarios del Sistema</b>
+                                    </p>
+                                    <select id="usuario_select" class="form-control show-tick" data-live-search="true">
+                                        {% for usu in usuario_list %}
+                                        <option id="{{usu.id}}">{{usu.first_name}} {{usu.last_name}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>
+                                        <b>Coberturas del Sistema</b>
+                                    </p>
+                                    <select id="cobertura_select" class="form-control show-tick" data-live-search="true">
+                                        {% for cob in cobertura_list %}
+                                        <option id="{{cob.secuencial}}">{{cob.nombre}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <p>
+                                        <b>Requeridos del Sistema</b>
+                                    </p>
+                                    <select id="requerido_select" class="form-control show-tick" data-live-search="true">
+                                        {% for req in requerido_list %}
+                                        <option id="{{req.secuencial}}">{{req.nombre}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="row clearfix" > 
+                                <div class="col-md-12 col-md-offset-10">
+                                        
+                                    <button id="guardarActividadUnica" type="submit" class="btn bg-orange waves-effect" disabled>
+                                        <i class="material-icons">save</i><span>Agregar</span>
+                                    </button>    
+                                </div>
+                            </div>
+                        </form>
+                       
+                    </div>
+                    <div id="tipoactividad" class="well"  style="display: none">
+                        <div  class="row clearfix" > 
+                            <div class="col-md-3" >
+                                <p>
+                                    <b>TIPO ACTIVIDAD</b>
+                                </p>
+                                <select id="tipoactividad_select" class="form-control show-tick" data-live-search="true" onchange="obtenerActividades()">
+                                    <option id="1">Mensual</option>
+                                    <option id="2">Bimensual</option>
+                                    <option id="3">Trimestral</option>
+                                    <option id="4">Cuatrimestral</option>
+                                    <option id="5">Semestral</option>
+                                    <option id="6">Anual</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" class="btn btn-primary waves-effect" onclick="obtenerActividadesSeleccionadas()">
+                                    <i class="material-icons">list</i>
+                                    <span>Ingresar a Tabla</span>
+                                </button>
+                            </div>
+                            <div class="col-md-12">
+                                <select id="optgroup" class="ms" multiple="multiple">                               
+                                </select>
+                            </div>
+                            
+                        </div>
+                    </div>
+                    
+                    <hr>
+                    <div id="cronogramaTabla" style="display: none"> 
+                        <div class="header">
+                            <h2 class="font-bold col-orange"> Cronograma
+                                    <small>Tabla de actividades</small>
+                            </h2>
+                        </div>
+                    
+                        <form action="/actividad/planificacion/guardarplanificacion/" method="post" id="tablaform">
+                            <div class="table-responsive" style="min-height: .01%; overflow-x: auto;">
+                                <a href="javascript:;" class="deleteall" title="mainTable">   Elimiar</a>
+                                <table id="mainTable"
+                                    class="table table-bordered table-striped ">
+                                    <thead>
+                                        <tr>
+                                            <th style="text-align:center">    
+                                                <input type="checkbox" id="ff" class="checkall" onclick="toggleChecked(this.checked)" /><label for="ff"></label>
+                                            </th>
+                                            <th style="width: 30%">ACTIVIDAD</th>
+                                            <th>COBERTURA</th>
+                                            <th>RESPONSABLE</th>
+                                            <th>REQUERIDO </th>
+                                            <th>FECHA INICIO </th>
+                                            <th>FECHA FIN </th>
+                                        </tr>
+                                    </thead>
+                                    
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <hr />
+                            <div class="row clearfix">
+                                <div class="col-md-6 col-md-offset-10">
+                                    <button id="guardar_boton" class="btn btn-primary waves-effect" type="submit" " disabled> <i class="material-icons">save</i>
+                                        <span>Guardar</span></button>
+                                </div>
+
+                            </div>
+                        </form>
+                    </div>
+            </div>
+        </div>
+    </div>
+</div>      
+{% endblock content %}
+
+
+{% block js %}
+    <!-- Jquery Core Js -->
+    <script src="{% static 'plugins/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap/js/bootstrap.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-select/js/bootstrap-select.js' %}"></script>
+    <script src="{% static 'plugins/jquery-slimscroll/jquery.slimscroll.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-colorpicker/js/bootstrap-colorpicker.js' %}"></script>
+    <script src="{% static 'plugins/dropzone/dropzone.js' %}"></script>
+    <script src="{% static 'plugins/jquery-inputmask/jquery.inputmask.bundle.js' %}"></script>
+    <script src="{% static 'plugins/multi-select/js/jquery.multi-select.js' %}"></script>
+    <script src="{% static 'plugins/jquery-spinner/js/jquery.spinner.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-tagsinput/bootstrap-tagsinput.js' %}"></script>
+    <script src="{% static 'plugins/nouislider/nouislider.js' %}"></script>
+    <script src="{% static 'plugins/node-waves/waves.js' %}"></script>
+    <script src="{% static 'plugins/autosize/autosize.js' %}"></script>
+    <script src="{% static 'plugins/momentjs/moment.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-material-datetimepicker/js/bootstrap-material-datetimepicker.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-datepicker/js/bootstrap-datepicker.js' %}"></script>
+    <script src="{% static 'plugins/sweetalert/sweetalert.min.js' %}"></script>
+    <script src="{% static 'js/admin.js' %}"></script>
+    <script src="{% static 'js/system/actividad.js' %}"></script>
+    <script src="{% static 'js/system/planificacion.js' %}"></script>
+    <script src="{% static 'js/pages/forms/basic-form-elements.js' %}"></script>
+    <script src="{% static 'js/pages/forms/advanced-form-elements.js' %}"></script>
+    <script src="{% static 'js/demo.js' %}"></script>
+    <script src="{% static 'plugins/bootstrap-notify/bootstrap-notify.js' %}"></script>
+    <!--<script src="{% static 'js/pages/ui/dialogs.js' %}"></script>-->
+{% endblock js %}

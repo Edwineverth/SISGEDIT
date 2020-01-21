@@ -1,4 +1,5 @@
 ﻿{% load staticfiles %}
+{% load auth_extras %}
 <!DOCTYPE html>
 <html>
 
@@ -6,10 +7,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=Edge">
     <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-    <title>Welcome To | Bootstrap Based Admin Template - Material Design</title>
-    <!-- Favicon-->
-    <link rel="icon" href="favicon.ico" type="image/x-icon">
-
+    <title>SISGETI</title>
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,700&subset=latin,cyrillic-ext" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" type="text/css">
@@ -284,73 +282,202 @@
                 <div class="image">
                     <img src="{% static 'images/user.png' %}" width="48" height="48" alt="User" />
                 </div>
-                <div class="info-container">
-                    <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">John Doe</div>
-                    <div class="email">john.doe@example.com</div>
-                    <div class="btn-group user-helper-dropdown">
-                        <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
-                        <ul class="dropdown-menu pull-right">
-                            <li><a href="javascript:void(0);"><i class="material-icons">person</i>Profile</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="javascript:void(0);"><i class="material-icons">group</i>Followers</a></li>
-                            <li><a href="javascript:void(0);"><i class="material-icons">shopping_cart</i>Sales</a></li>
-                            <li><a href="javascript:void(0);"><i class="material-icons">favorite</i>Likes</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li><a href="javascript:void(0);"><i class="material-icons">input</i>Sign Out</a></li>
-                        </ul>
-                    </div>
+                    {% if user.is_authenticated %}
+                        {% if request.user|has_group:"usuarios" or request.user|has_group:"jefesistemas" %} 
+                            <div class="info-container">
+                                <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ user.username }}</div>
+                                <div class="email">{{ user.email }}</div>
+                                <div class="btn-group user-helper-dropdown">
+                                    <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
+                                    <ul class="dropdown-menu pull-right">
+                                        <li><a href="javascript:void(0);"><i class="material-icons">person</i>Profile</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="javascript:void(0);"><i class="material-icons">group</i>Followers</a></li>
+                                        <li><a href="javascript:void(0);"><i class="material-icons">shopping_cart</i>Sales</a></li>
+                                        <li><a href="javascript:void(0);"><i class="material-icons">favorite</i>Likes</a></li>
+                                        <li role="separator" class="divider"></li>
+                                        <li><a href="{% url 'logout' %}"><i class="material-icons">input</i>Sign Out</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                        {% else %}
+                        <div class="info-container">
+                            <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ user.username }}</div>
+                            <div class="email">{{ user.email }}</div>
+                            <div class="btn-group user-helper-dropdown">
+                                <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
+                                <ul class="dropdown-menu pull-right">
+                                    <li><a href="javascript:void(0);"><i class="material-icons">person</i>Profile</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="javascript:void(0);"><i class="material-icons">group</i>Followers</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="{% url 'logout' %}"><i class="material-icons">input</i>Sign Out</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                        {% endif %}
+                    {% else %}
+                        <div class="info-container">
+                            <div class="name" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Invitado</div>
+                            <div class="email">ti@caconce.com.ec</div>
+                            <div class="btn-group user-helper-dropdown">
+                                <i class="material-icons" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">keyboard_arrow_down</i>
+                                <ul class="dropdown-menu pull-right">
+                                    <li><a href="javascript:void(0);"><i class="material-icons">person</i>Profile</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="javascript:void(0);"><i class="material-icons">group</i>Followers</a></li>
+                                    <li><a href="javascript:void(0);"><i class="material-icons">shopping_cart</i>Sales</a></li>
+                                    <li><a href="javascript:void(0);"><i class="material-icons">favorite</i>Likes</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="{% url 'login' %}"><i class="material-icons">input</i>Login</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
-            </div>
             <!-- #User Info -->
             <!-- Menu -->
-            <div class="menu">
-                <ul class="list">
-                    <li class="header">NAVEGACIÓN</li>
-                    <li class="active">
-                        <a href="index.html">
-                            <i class="material-icons">home</i>
-                            <span>Home</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="pages/typography.html">
-                            <i class="material-icons">person</i>
-                            <span>Usuarios</span>
-                        </a>
-                    </li>
-                    
-                    <li>
-                        <a href="{% url 'requerido_listar' %}">
-                            <i class="material-icons">phonelink_setup</i>
-                            <span>Requeridos</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'cobertura_listar' %}">
-                            <i class="material-icons">rss_feed</i>
-                            <span>Cobertura</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'actividad_listar' %}">
-                            <i class="material-icons">event_note</i>
-                            <span>Actividades</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="pages/helper-classes.html">
-                            <i class="material-icons">timer</i>
-                            <span>Tipos Turnos</span>
-                        </a>
-                    </li>
-                    <li>
-                        <a href="{% url 'feriados_listar' %}">
-                            <i class="material-icons">wb_sunny</i>
-                            <span>Feriados</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
+            {% if user.is_authenticated %}
+            
+                {% if request.user|has_group:"jefesistemas" %} 
+                    <div class="menu">
+                        <ul class="list">
+                            <li class="header">NAVEGACIÓN</li>
+                            <li class="active">
+                                <a href="index.html">
+                                    <i class="material-icons">home</i>
+                                    <span>Home</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" class="menu-toggle">
+                                    <i class="material-icons">person</i>
+                                    <span>Usuarios</span>
+                                </a>
+                                <ul class="ml-menu">
+                                    <li>
+                                        <a href="{% url 'signup' %}">
+                                            <i class="material-icons">event_note</i>
+                                            <span>Registro Usuarios</span>
+                                        </a>
+                                    </li>
+                                    
+                                </ul>
+                            </li>
+
+                            
+                            <li>
+                                <a href="{% url 'requerido_listar' %}">
+                                    <i class="material-icons">phonelink_setup</i>
+                                    <span>Requeridos</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'cobertura_listar' %}">
+                                    <i class="material-icons">rss_feed</i>
+                                    <span>Cobertura</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="pages/helper-classes.html">
+                                    <i class="material-icons">timer</i>
+                                    <span>Tipos Turnos</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="{% url 'feriados_listar' %}">
+                                    <i class="material-icons">wb_sunny</i>
+                                    <span>Feriados</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" class="menu-toggle">
+                                    <i class="material-icons">insert_invitation</i>
+                                    <span>Actividades</span>
+                                </a>
+                                <ul class="ml-menu">
+                                    <li>
+                                        <a href="{% url 'actividad_listar' %}">
+                                            <i class="material-icons">event_note</i>
+                                            <span>Tabla Actividades</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'planificacion_insertar' %}">
+                                            <i class="material-icons">event_available</i>
+                                            <span>Generar Planificación</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'planificacion_listar' %}">
+                                            <i class="material-icons">event_available</i>
+                                            <span>Listar Planificación</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+
+                {% elif request.user|has_group:"usuarios"%}
+                    <div class="menu">
+                        <ul class="list">
+                            <li class="header">NAVEGACIÓN</li>
+                            <li class="active">
+                                <a href="index.html">
+                                    <i class="material-icons">home</i>
+                                    <span>Home</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="javascript:void(0);" class="menu-toggle">
+                                    <i class="material-icons">insert_invitation</i>
+                                    <span>Actividades</span>
+                                </a>
+                                <ul class="ml-menu">
+                                    <li>
+                                        <a href="{% url 'actividad_listar' %}">
+                                            <i class="material-icons">event_note</i>
+                                            <span>Tabla Actividades</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                {% else %}
+                    <div class="menu">
+                        <ul class="list">
+                            <li class="header">NAVEGACIÓN</li>
+                            <li class="active">
+                                <a href="index.html">
+                                    <i class="material-icons">home</i>
+                                    <span>Home</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                {% endif %}
+
+            {% else %}
+                <div class="menu">
+                    <ul class="list">
+                        <li class="header">NAVEGACIÓN</li>
+                        <li class="active">
+                            <a href="index.html">
+                                <i class="material-icons">home</i>
+                                <span>Home</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+            {% endif %}
+
+            
+                            
+            
             <!-- #Menu -->
             <!-- Footer -->
             <div class="legal">
@@ -367,6 +494,7 @@
 
     <section class="content">
         {% block content %}
+        
         {% endblock %}
         
     </section>

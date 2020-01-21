@@ -8,7 +8,9 @@
 # Feel free to rename the models, but don't rename db_table values or field
 # names.
 from django.db import models
-
+from django.contrib.auth.models import User
+from django.dispatch import receiver
+from django.db.models.signals import post_save
 
 class Actividad(models.Model):
     secuencial = models.AutoField(primary_key=True)
@@ -20,9 +22,7 @@ class Actividad(models.Model):
     secuencial_cobertura = models.ForeignKey(
         'Cobertura', models.DO_NOTHING,
         db_column='secuencial_cobertura', default=1)
-    secuencial_usuario = models.ForeignKey(
-        'Usuario', models.DO_NOTHING,
-        db_column='secuencial_usuario', default=1)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:  # noqa
         ordering = ["secuencial"]
@@ -85,10 +85,27 @@ class Detalleplanificacionactividad(models.Model):
         db_column='secuencial_planificacion', default=1)
     fechainicio = models.DateField()
     fechafin = models.DateField()
-    estado = models.CharField(max_length=1)
-
+    INICIADO = 'I'
+    EJECUTADO = 'E'
+    TERMINADO = 'T'
+    PROCESO = (
+        (INICIADO, 'Iniciado'),
+        (EJECUTADO, 'Ejecutando'),
+        (TERMINADO, 'Terminado'),
+        )
+    estado = models.CharField(max_length=1, choices=PROCESO, default=INICIADO,)
     class Meta:  # noqa
         ordering = ["secuencial"]
+
+
+class InformeTI(models.Model):
+    secuencial = models.AutoField(primary_key=True)
+    codigoinforme = models.CharField(max_length=4, blank=False, null=False)
+    fecha = models.DateField()
+    secuencial_detalleplanificacion = models.ForeignKey(
+        Detalleplanificacionactividad, models.DO_NOTHING, db_column='secuencial_detalleplanificacion',
+        default=1)
+    detalle = models.TextField()
 
 
 class Feriados(models.Model):
@@ -97,6 +114,7 @@ class Feriados(models.Model):
     descripcion = models.CharField(max_length=120, blank=True, null=True)
     fechainicio = models.DateField(blank=True, null=True)
     fechafin = models.DateField(blank=True, null=True)
+    
     estado = models.NullBooleanField()
 
     class Meta:  # noqa
@@ -131,7 +149,7 @@ class Listacontrol(models.Model):
     def __str__(self):
         return 'Feriados: ' + self.nombre
 
-
+"""
 class Persona(models.Model):
     secuencial = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=50, blank=True, null=True)
@@ -144,6 +162,39 @@ class Persona(models.Model):
 
     def __str__(self):
         return 'Persona: ' + self.nombre
+"""
+
+class Profile(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    bio = models.TextField(max_length=500, blank=True)
+    birth_date = models.DateField(null=True, blank=True)
+    secuencial_cargo = models.ForeignKey(
+        'Cargo', models.DO_NOTHING,
+        db_column='secuencial_cargo', default=1)
+    numerotelefono = models.CharField(max_length=10, blank=True, null=True)
+
+
+@receiver(post_save, sender=User)
+def update_user_profile(sender, instance, created, **kwargs):
+    if created:
+        Profile.objects.create(user=instance)
+    instance.profile.save()
+
+
+class Cargo(models.Model):
+    secuencial = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100, blank=True, null=True)
+
+    ACTIVO = 'A'
+    INACTIVO = 'I'
+    PROCESO = (
+        (ACTIVO, 'Activo'),
+        (INACTIVO, 'Inactivo'),
+        )
+    estado = models.CharField(max_length=1, choices=PROCESO, default=ACTIVO,)
+
+    def __str__(self):
+        return self.nombre
 
 
 class Planificacion(models.Model):
@@ -154,6 +205,21 @@ class Planificacion(models.Model):
 
     class Meta:  # noqa
         ordering = ["secuencial"]
+
+
+class Notasplanificacion(models.Model):
+    secuencial = models.AutoField(primary_key=True)
+    nota = models.TextField(null=True)
+    secuencial_planificacion = models.ForeignKey(
+        'Planificacion', models.DO_NOTHING,
+        db_column='secuencial_planificacion', default=1)
+    fechaproceso = models.DateField(blank=True, null=True)
+
+    class Meta:  # noqa
+        ordering = ["secuencial"]
+
+    def __str__(self):
+        return 'Nota: ' + self.nota
 
 
 class Requerido(models.Model):
@@ -196,8 +262,7 @@ class Tipoturno(models.Model):
 
 class Turno(models.Model):
     secuencial = models.AutoField(primary_key=True)
-    secuencial_usuario = models.ForeignKey(
-        'Usuario', models.DO_NOTHING, db_column='secuencial_usuario')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     secuencial_tipoturno = models.ForeignKey(
         Tipoturno, models.DO_NOTHING, db_column='secuencial_tipoturno')
     secuencial_horario = models.ForeignKey(
@@ -216,7 +281,7 @@ class Turnoferiado(models.Model):
     secuencial_feriado = models.ForeignKey(
         Feriados, models.DO_NOTHING, db_column='secuencial_feriado')
 
-
+"""
 class Usuario(models.Model):
     secuencial = models.AutoField(primary_key=True)
     usuario = models.CharField(max_length=50, blank=True, null=True)
@@ -231,3 +296,4 @@ class Usuario(models.Model):
 
     def __str__(self):
         return 'Usuario: ' + self.usuario
+"""

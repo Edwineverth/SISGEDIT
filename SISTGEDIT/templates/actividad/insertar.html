@@ -63,7 +63,7 @@
                             </p>
                             <select id="usuario_select" class="form-control show-tick" data-live-search="true">
                                 {% for usu in usuario_list %}
-                                <option id="{{usu.secuencial}}">{{usu.usuario}}</option>
+                                <option id="{{usu.id}}">{{usu.first_name}} {{usu.last_name}}</option>
                                 {% endfor %}
                             </select>
                         </div>
